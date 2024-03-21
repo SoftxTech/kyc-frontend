@@ -22,21 +22,6 @@ const Info: NextPage = () => {
           backgroundAttachment: "scroll",
         }}
       >
-        {/* <div
-          style={{
-            width: "100vw",
-            position: "fixed",
-            zIndex: -1000,
-            height: "300%",
-          }}
-        >
-          <Image
-            src="/info_bg.svg"
-            alt="Info Background"
-            layout="fill"
-            objectFit="cover"
-          />
-        </div> */}
         <Box
           sx={{
             display: "flex",
