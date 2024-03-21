@@ -1,10 +1,9 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
 import { Box, Typography, Theme, useMediaQuery } from "@mui/material";
 import { Layout } from "../components/layout/layout";
 import { useTheme } from "@emotion/react";
 import {} from "@mui/material";
+import Image from "next/image";
 
 const Info: NextPage = () => {
   const theme = useTheme();
@@ -25,154 +24,285 @@ const Info: NextPage = () => {
         <Box
           sx={{
             display: "flex",
-            padding: 3,
             flexDirection: "column",
+            padding: "10%",
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
-            minHeight: "100vh",
           }}
         >
-          <Typography
-            variant="h1"
+          <Box
             sx={{
-              fontSize: "5rem",
-              fontWeight: "bold",
-              color: theme.palette.primary.main,
-              textDecoration: "none",
+              display: "flex",
+              padding: 3,
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              minHeight: "100vh",
             }}
           >
-            Welcome TO Our KYC
-          </Typography>
-          {mdUp && (
+            <div
+              style={{
+                alignSelf: "stretch",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  alignSelf: "stretch",
+                  width: "8px",
+                  height: "57px",
+                  margin: "15px",
+                  position: "relative",
+                  borderRadius: "17px",
+                  background:
+                    "linear-gradient(180deg, #fff 3.95%, #ffef5d 40.35%, #ffe600 74.56%), #d9d9d9",
+                }}
+              ></div>{" "}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: "bold",
+                  color: theme.palette.primary.contrastText,
+                  textDecoration: "none",
+                }}
+              >
+                About Us
+              </Typography>
+            </div>
+
             <Typography
               variant="subtitle1"
               sx={{
-                width: "37%",
+                width: "100%",
                 color: theme.palette.primary.contrastText,
                 textDecoration: "none",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Odio nibh dignissim mattis
-              convallis. In phasellus vitae nunc hac at sed aliquet eu
-              consectetur. Felis arcu nec mi tristique ut in sed. Neque elit non
-              viverra consectetur.
+              At IDShield, we are pioneers in revolutionizing KYC processes
+              through advanced Blockchain technology. IDShield believes in
+              empowering individuals and businesses with secure, efficient, and
+              accessible identity verification solutions. Our commitment to
+              innovation has positioned IDShield as a leader in the industry,
+              delivering unmatched trust and reliability. With IDShield at the
+              forefront, we strive to redefine digital identity verification,
+              ensuring a seamless and trustworthy experience for our users. Join
+              us on the journey to a secure and connected digital future, where
+              IDShield leads the way in identity protection and verification.
             </Typography>
-          )}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            padding: 3,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            minHeight: "100vh",
-          }}
-        >
-          <Typography
-            variant="h1"
+            <Image
+              src="/aboutUs.svg"
+              width={545}
+              height={306}
+              alt="About Us"
+              layout="responsive"
+              objectFit="cover"
+            />
+          </Box>
+          <Box
             sx={{
-              fontSize: "5rem",
-              fontWeight: "bold",
-              color: theme.palette.primary.main,
-              textDecoration: "none",
+              display: "flex",
+              padding: 3,
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              minHeight: "100vh",
             }}
           >
-            Welcome TO Our KYC
-          </Typography>
-          {mdUp && (
+            <div
+              style={{
+                alignSelf: "stretch",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  alignSelf: "stretch",
+                  width: "8px",
+                  height: "57px",
+                  margin: "15px",
+                  position: "relative",
+                  borderRadius: "17px",
+                  background:
+                    "linear-gradient(180deg, #fff 3.95%, #ffef5d 40.35%, #ffe600 74.56%), #d9d9d9",
+                }}
+              ></div>{" "}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: "bold",
+                  color: theme.palette.primary.contrastText,
+                  textDecoration: "none",
+                }}
+              >
+                About Us
+              </Typography>
+            </div>
+
             <Typography
               variant="subtitle1"
               sx={{
-                width: "37%",
+                width: "100%",
                 color: theme.palette.primary.contrastText,
                 textDecoration: "none",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Odio nibh dignissim mattis
-              convallis. In phasellus vitae nunc hac at sed aliquet eu
-              consectetur. Felis arcu nec mi tristique ut in sed. Neque elit non
-              viverra consectetur.
+              At IDShield, we are pioneers in revolutionizing KYC processes
+              through advanced Blockchain technology. IDShield believes in
+              empowering individuals and businesses with secure, efficient, and
+              accessible identity verification solutions. Our commitment to
+              innovation has positioned IDShield as a leader in the industry,
+              delivering unmatched trust and reliability. With IDShield at the
+              forefront, we strive to redefine digital identity verification,
+              ensuring a seamless and trustworthy experience for our users. Join
+              us on the journey to a secure and connected digital future, where
+              IDShield leads the way in identity protection and verification.
             </Typography>
-          )}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            padding: 3,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            minHeight: "100vh",
-          }}
-        >
-          <Typography
-            variant="h1"
+          </Box>
+          <Box
             sx={{
-              fontSize: "5rem",
-              fontWeight: "bold",
-              color: theme.palette.primary.main,
-              textDecoration: "none",
+              display: "flex",
+              padding: 3,
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              minHeight: "100vh",
             }}
           >
-            Welcome TO Our KYC
-          </Typography>
-          {mdUp && (
+            <div
+              style={{
+                alignSelf: "stretch",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  alignSelf: "stretch",
+                  width: "8px",
+                  height: "57px",
+                  margin: "15px",
+                  position: "relative",
+                  borderRadius: "17px",
+                  background:
+                    "linear-gradient(180deg, #fff 3.95%, #ffef5d 40.35%, #ffe600 74.56%), #d9d9d9",
+                }}
+              ></div>{" "}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: "bold",
+                  color: theme.palette.primary.contrastText,
+                  textDecoration: "none",
+                }}
+              >
+                About Us
+              </Typography>
+            </div>
+
             <Typography
               variant="subtitle1"
               sx={{
-                width: "37%",
+                width: "100%",
                 color: theme.palette.primary.contrastText,
                 textDecoration: "none",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Odio nibh dignissim mattis
-              convallis. In phasellus vitae nunc hac at sed aliquet eu
-              consectetur. Felis arcu nec mi tristique ut in sed. Neque elit non
-              viverra consectetur.
+              At IDShield, we are pioneers in revolutionizing KYC processes
+              through advanced Blockchain technology. IDShield believes in
+              empowering individuals and businesses with secure, efficient, and
+              accessible identity verification solutions. Our commitment to
+              innovation has positioned IDShield as a leader in the industry,
+              delivering unmatched trust and reliability. With IDShield at the
+              forefront, we strive to redefine digital identity verification,
+              ensuring a seamless and trustworthy experience for our users. Join
+              us on the journey to a secure and connected digital future, where
+              IDShield leads the way in identity protection and verification.
             </Typography>
-          )}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            padding: 3,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            minHeight: "100vh",
-          }}
-        >
-          <Typography
-            variant="h1"
+          </Box>
+          <Box
             sx={{
-              fontSize: "5rem",
-              fontWeight: "bold",
-              color: theme.palette.primary.main,
-              textDecoration: "none",
+              display: "flex",
+              padding: 3,
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              minHeight: "100vh",
             }}
           >
-            Welcome TO Our KYC
-          </Typography>
-          {mdUp && (
+            <div
+              style={{
+                alignSelf: "stretch",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  alignSelf: "stretch",
+                  width: "8px",
+                  height: "57px",
+                  margin: "15px",
+                  position: "relative",
+                  borderRadius: "17px",
+                  background:
+                    "linear-gradient(180deg, #fff 3.95%, #ffef5d 40.35%, #ffe600 74.56%), #d9d9d9",
+                }}
+              ></div>{" "}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: "bold",
+                  color: theme.palette.primary.contrastText,
+                  textDecoration: "none",
+                }}
+              >
+                About Us
+              </Typography>
+            </div>
+
             <Typography
               variant="subtitle1"
               sx={{
-                width: "37%",
+                width: "100%",
                 color: theme.palette.primary.contrastText,
                 textDecoration: "none",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Odio nibh dignissim mattis
-              convallis. In phasellus vitae nunc hac at sed aliquet eu
-              consectetur. Felis arcu nec mi tristique ut in sed. Neque elit non
-              viverra consectetur.
+              At IDShield, we are pioneers in revolutionizing KYC processes
+              through advanced Blockchain technology. IDShield believes in
+              empowering individuals and businesses with secure, efficient, and
+              accessible identity verification solutions. Our commitment to
+              innovation has positioned IDShield as a leader in the industry,
+              delivering unmatched trust and reliability. With IDShield at the
+              forefront, we strive to redefine digital identity verification,
+              ensuring a seamless and trustworthy experience for our users. Join
+              us on the journey to a secure and connected digital future, where
+              IDShield leads the way in identity protection and verification.
             </Typography>
-          )}
+            <Image
+              src="/aboutUs.svg"
+              width={545}
+              height={306}
+              alt="About Us"
+              layout="responsive"
+              objectFit="cover"
+            />
+          </Box>
         </Box>
       </Box>
     </Layout>

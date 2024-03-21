@@ -18,22 +18,14 @@ const Home: NextPage = () => {
         <meta name="description" content="KYC" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box>
-        <div
-          style={{
-            width: "100vw",
-            position: "fixed",
-            zIndex: -1000,
-            height: "100vh",
-          }}
-        >
-          <Image
-            src="/kyc_bg.svg"
-            alt="KYC Background"
-            layout="fill"
-            objectFit="cover"
-          />
-        </div>
+      <Box
+        sx={{
+          backgroundImage: `url(${"/kyc_bg.svg"})`,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
         <Box
           sx={{
             display: "flex",
