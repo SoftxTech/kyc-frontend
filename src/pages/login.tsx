@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Camera } from '../components/Camera/Camera';
 import { CameraType } from '../components/Camera/types';
+import * as faceapi from 'face-api.js';
 
 const Wrapper = styled.div`
   position: fixed;
@@ -142,22 +143,84 @@ const FullScreenImagePreview = styled.div<{ image: string | null }>`
   background-position: center;
 `;
 
-const App = () => {
+function getBase64StrFromUrl(dataUrl: any) {
+  const prefix = "base64,";
+  const sliceIndex = dataUrl.indexOf(prefix);
+  if (sliceIndex === -1) throw new Error("Expected base64 data URL");
+  return dataUrl.slice(sliceIndex + prefix.length);
+}
+
+// https://deno.land/std@0.182.0/encoding/base64.ts?source#L137
+function decode(base64Str: any) {
+  const binString = window.atob(base64Str);
+  const size = binString.length;
+  const bytes = new Uint8Array(size);
+  for (let i = 0; i < size; i++) {
+    bytes[i] = binString.charCodeAt(i);
+  }
+  return bytes;
+}
+
+const Login = () => {
   const [numberOfCameras, setNumberOfCameras] = useState(0);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string>('');
   const [showImage, setShowImage] = useState<boolean>(false);
   const camera = useRef<CameraType>(null);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [activeDeviceId, setActiveDeviceId] = useState<string | undefined>(undefined);
   const [torchToggled, setTorchToggled] = useState<boolean>(false);
+  const [faceMatcher, setFaceMatcher] = useState<any>(null)
+  const [isLoaded, setIsLoaded] = useState<boolean>(false)
 
+  const b64toBlob = (b64Data:string, contentType='', sliceSize=512) => {
+    // const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+  
+    for (let offset = 0; offset < b64Data.length; offset += sliceSize) {
+      const slice = b64Data.slice(offset, offset + sliceSize);
+  
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+  
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+      
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+  }
+  const load = async () => {
+    await Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri('models'),
+        faceapi.nets.faceLandmark68Net.loadFromUri('models'),
+        faceapi.nets.faceRecognitionNet.loadFromUri('models'),
+        faceapi.nets.ageGenderNet.loadFromUri('models'),
+    ])
+    console.log("loaded")
+    setIsLoaded(true)
+  }
   useEffect(() => {
+    load()
+  },[])
+
+  useEffect(
+    () => {
+      if (isLoaded){
     (async () => {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter((i) => i.kind == 'videoinput');
+      setFaceMatcher(
+        new faceapi.FaceMatcher(await faceapi.detectAllFaces(await faceapi.fetchImage("20240608_154330.jpg")).withFaceLandmarks().withFaceDescriptors())
+      )
+
       setDevices(videoDevices);
     })();
-  });
+    console.log("hello");
+  }
+}
+, [isLoaded]);
 
   return (
     <Wrapper>
@@ -207,11 +270,29 @@ const App = () => {
           }}
         />
         <TakePhotoButton
-          onClick={() => {
+          onClick={ async () => {
             if (camera.current) {
               const photo = camera.current.takePhoto();
-              console.log(photo);
-              setImage(photo as string);
+              const base64Image = photo.toString();
+
+              setImage(base64Image);
+              
+              const blob = await fetch(image).then(res => res.blob());
+
+              const facesToCheck = await faceapi.bufferToImage(blob)
+
+              let facesToCheckAiData = await faceapi.detectAllFaces(facesToCheck).withFaceLandmarks().withFaceDescriptors()
+              facesToCheckAiData = faceapi.resizeResults(facesToCheckAiData, facesToCheck)
+
+              facesToCheckAiData.forEach( (face:any) => {
+                const {detection, descriptor} = face
+                //make a label, using the default
+                let label = faceMatcher.findBestMatch(descriptor).toString()
+                console.log(label)
+                if (label.includes("unknown")) return
+                let options = {label: "Abdo"}
+                console.log(options)
+              })
             }
           }}
         />
@@ -239,4 +320,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Login;
