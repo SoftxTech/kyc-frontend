@@ -12,6 +12,7 @@ import { CssBaseline } from "@mui/material";
 import { SettingsButton } from "../components/settings-button";
 import { Toaster } from "react-hot-toast";
 import { createTheme } from "../theme";
+import { ThirdwebProvider } from "@thirdweb-dev/react";
 
 type EnhancedAppProps = AppProps & {
   Component: NextPage;
@@ -19,11 +20,13 @@ type EnhancedAppProps = AppProps & {
 };
 
 const clientSideEmotionCache = createEmotionCache();
+const activeChain = 'ethereum'
 
 const App: FC<EnhancedAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
+    
     <CacheProvider value={emotionCache}>
       <Head>
         <title>KYC</title>
@@ -45,12 +48,15 @@ const App: FC<EnhancedAppProps> = (props) => {
               <CssBaseline />
               <Toaster position="top-center" />
               <SettingsButton />
-              <Component {...pageProps} />
+              <ThirdwebProvider activeChain={activeChain}>
+                <Component {...pageProps} />
+                </ThirdwebProvider>
             </ThemeProvider>
           )}
         </SettingsConsumer>
       </SettingsProvider>
-    </CacheProvider>
+      </CacheProvider>
+      
   );
 };
 
