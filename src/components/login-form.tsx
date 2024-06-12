@@ -22,32 +22,45 @@ import LoadingButton from "@mui/lab/LoadingButton";
 // import { useAuth } from '../../hooks/use-auth';
 import toast from "react-hot-toast";
 import { Label } from "@mui/icons-material";
+import { Web3Button, contractType, useContract } from "@thirdweb-dev/react";
+import { CONTRACT_ADDRESS } from "../const/addresses";
+import { Contract } from "ethers";
 
 export const SigninForm: FC = (props) => {
   // const isMounted = useMounted();
   const router = useRouter();
+  const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
+  const [user, setUser] = useState(null);
   // const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
+      _id: "",
+      pass: "",
       submit: null,
     },
     validationSchema: Yup.object({
-      email: Yup.string().max(255).required("emailIsRequired"),
-      password: Yup.string().max(255).required("passwordIsRequired"),
+      _id: Yup.number().required("_id Is Required"),
+      pass: Yup.string().max(255).required("password Is Required"),
     }),
     onSubmit: async (values: any): Promise<void> => {
       try {
-        setLoading(true);
-        router.push("/login");
-        // await login(values);
-      } catch (err: Error) {
+        setLoading(isLoading);
+        console.log("values", values);
+
+        const result = await contract?.call("logIN", [
+          Number(values._id),
+          values.pass,
+        ]);
+        setUser(result);
+        console.log("result", result);
+        // router.push("/login");
+      } catch (err: any) {
         toast.error(err.message || "failed");
-        setLoading(false);
+        console.log("error", error);
+        setLoading(isLoading);
       }
     },
   });
@@ -77,18 +90,18 @@ export const SigninForm: FC = (props) => {
             color: theme.palette.text.primary,
           }}
         >
-          Email
+          ID
         </Typography>
         <OutlinedInput
           // autoFocus
-          error={Boolean(formik.touched.email && formik.errors.email)}
+          error={Boolean(formik.touched._id && formik.errors._id)}
           fullWidth
-          helperText={formik.touched.email && formik.errors.email}
-          name="email"
+          helperText={formik.touched._id && formik.errors._id}
+          name="_id"
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
-          type="name"
-          value={formik.values.email}
+          type="id"
+          value={formik.values._id}
           InputProps={{
             style: {
               fontFamily: "sans-serif",
@@ -114,13 +127,13 @@ export const SigninForm: FC = (props) => {
           Password
         </Typography>
         <OutlinedInput
-          error={Boolean(formik.touched.password && formik.errors.password)}
+          error={Boolean(formik.touched.pass && formik.errors.pass)}
           fullWidth
-          name="password"
+          name="pass"
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
-          value={formik.values.password}
-          type={showPassword ? "text" : "password"}
+          value={formik.values.pass}
+          type={showPassword ? "text" : "pass"}
           sx={{
             fontFamily: "sans-serif",
           }}
@@ -128,7 +141,7 @@ export const SigninForm: FC = (props) => {
             <InputAdornment position="end">
               <IconButton
                 sx={{ color: "black" }}
-                aria-label="toggle password visibility"
+                aria-label="toggle pass visibility"
                 onClick={handleClickShowPassword}
                 onMouseDown={handleMouseDownPassword}
                 edge="end"

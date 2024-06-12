@@ -16,7 +16,7 @@ import {
   Paper,
   useTheme,
 } from "@mui/material";
-import { ConnectWallet } from "@thirdweb-dev/react";
+import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import { SigninForm } from "../login-form";
 import { useRouter } from "next/router";
 
@@ -30,6 +30,7 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 export const Navbar: FC = () => {
   const theme = useTheme();
   const router = useRouter();
+  const address = useAddress();
   const [openForm, setOpenForm] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -60,7 +61,7 @@ export const Navbar: FC = () => {
 
   return (
     <AppBar position="fixed" sx={{ background: "none", border: "none" }}>
-      <Toolbar sx={{ boxShadow: "none" }}>
+      <Toolbar sx={{ boxShadow: "none", mr: -5 }}>
         <GppGoodOutlinedIcon
           sx={{ display: { md: "flex" }, mr: 1 }}
           fontSize="large"
@@ -152,28 +153,28 @@ export const Navbar: FC = () => {
             </Button>
           ))}
         </Box>
-        <Box sx={{ flexGrow: 0.05, my: 0 }}>
-          <ConnectWallet
-            style={{
-              flexGrow: 0.05,
-              color: "white",
-              display: "block",
-              background: "none",
-            }}
-          />
+        <Box sx={{ flexGrow: 0.05, m: 0, p: 0, width: "180px" }}>
+          <ConnectWallet modalSize="wide" />
         </Box>
-        <Box sx={{ flexGrow: 0.05 }}>
-          <Button
-            onClick={hanadleSignIn}
-            // disabled // ConnectWallet condition
-            sx={{
-              color: theme.palette.primary.contrastText,
-              bgcolor: theme.palette.primary.main,
-            }}
-          >
-            Sign In
-          </Button>
-        </Box>
+        {address && (
+          <Box sx={{ flexGrow: 0.05 }}>
+            <Button
+              onClick={hanadleSignIn}
+              size="large"
+              sx={{
+                ml: -3,
+                color: theme.palette.primary.light,
+                bgcolor: theme.palette.primary.main,
+                "&:hover": {
+                  color: theme.palette.primary.dark, // Adjust hover color as desired
+                  cursor: "pointer", // Add cursor: pointer for hover feedback
+                },
+              }}
+            >
+              Sign In
+            </Button>
+          </Box>
+        )}
       </Toolbar>
       <Paper style={{ backgroundColor: "lightblue" }}>
         <Dialog open={openForm} onClose={handleClose} maxWidth="xs" fullWidth>
