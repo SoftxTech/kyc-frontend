@@ -45,7 +45,7 @@ const App: FC<EnhancedAppProps> = (props) => {
               <CssBaseline />
               <Toaster position="top-center" />
               <SettingsButton />
-              <Component {...pageProps} />
+                <Component {...pageProps} />     
             </ThemeProvider>
           )}
         </SettingsConsumer>
