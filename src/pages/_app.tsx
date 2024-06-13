@@ -20,13 +20,12 @@ type EnhancedAppProps = AppProps & {
 };
 
 const clientSideEmotionCache = createEmotionCache();
-const activeChain = 'ethereum'
+const activeChain = "sepolia";
 
 const App: FC<EnhancedAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
-    
     <CacheProvider value={emotionCache}>
       <Head>
         <title>KYC</title>
@@ -48,15 +47,17 @@ const App: FC<EnhancedAppProps> = (props) => {
               <CssBaseline />
               <Toaster position="top-center" />
               <SettingsButton />
-              <ThirdwebProvider activeChain={activeChain}>
+              <ThirdwebProvider
+                clientId={process.env.CLIENTID}
+                activeChain={activeChain}
+              >
                 <Component {...pageProps} />
-                </ThirdwebProvider>
+              </ThirdwebProvider>
             </ThemeProvider>
           )}
         </SettingsConsumer>
       </SettingsProvider>
-      </CacheProvider>
-      
+    </CacheProvider>
   );
 };
 
