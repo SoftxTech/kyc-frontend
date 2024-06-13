@@ -1,10 +1,9 @@
 import type { NextPage } from "next";
-import { Box, Typography, Theme, useMediaQuery } from "@mui/material";
+import { Box, Typography, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { Layout } from "../components/layout/layout";
-import { useTheme } from "@emotion/react";
 import {} from "@mui/material";
 import Image from "next/image";
-import isLoggedIn from "../utils/login-guard";
+import { AuthGuard } from "../components/auth-guard";
 
 const Info: NextPage = () => {
   const theme = useTheme();
@@ -197,4 +196,4 @@ const Info: NextPage = () => {
   );
 };
 
-export default Info;
+export default <AuthGuard>Info</AuthGuard>;
