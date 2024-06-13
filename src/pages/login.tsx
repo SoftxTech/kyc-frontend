@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Camera } from "../components/Camera/Camera";
 import { CameraType } from "../components/Camera/types";
 import * as faceapi from "face-api.js";
+import { login } from "../lib";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -259,13 +260,14 @@ const Login = () => {
                 facesToCheck
               );
 
-              facesToCheckAiData.forEach((face: any) => {
+              facesToCheckAiData.forEach(async (face: any) => {
                 const { detection, descriptor } = face;
                 //make a label, using the default
                 let label = faceMatcher.findBestMatch(descriptor).toString();
                 console.log(label);
                 if (label.includes("unknown")) return;
                 let options = { label: "Abdo" };
+                await login(options)
                 console.log(options);
               });
             }

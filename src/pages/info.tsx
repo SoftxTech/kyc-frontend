@@ -4,6 +4,7 @@ import { Layout } from "../components/layout/layout";
 import { useTheme } from "@emotion/react";
 import {} from "@mui/material";
 import Image from "next/image";
+import isLoggedIn from "../utils/login-guard";
 
 const Info: NextPage = () => {
   const theme = useTheme();
