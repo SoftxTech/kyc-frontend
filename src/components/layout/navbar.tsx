@@ -19,6 +19,7 @@ import {
 import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import { SigninForm } from "../login-form";
 import { useRouter } from "next/router";
+import { useAuth } from "../../hooks/use-auth";
 
 const pages = [
   { name: "Read Out Docs", route: "/info" },
@@ -31,6 +32,7 @@ export const Navbar: FC = () => {
   const theme = useTheme();
   const router = useRouter();
   const address = useAddress();
+  let { id, logout } = useAuth();
   const [openForm, setOpenForm] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -59,6 +61,11 @@ export const Navbar: FC = () => {
     setOpenForm(false);
   };
 
+  const handleLogout = async (): Promise<void> => {
+    await logout();
+    router.push("/").catch(console.error);
+  };
+  console.log(id);
   return (
     <AppBar position="fixed" sx={{ background: "none", border: "none" }}>
       <Toolbar sx={{ boxShadow: "none", mr: -5 }}>
@@ -156,7 +163,7 @@ export const Navbar: FC = () => {
         <Box sx={{ flexGrow: 0.05, m: 0, p: 0, width: "180px" }}>
           <ConnectWallet modalSize="wide" />
         </Box>
-        {address && (
+        {address && !id && (
           <Box sx={{ flexGrow: 0.05 }}>
             <Button
               onClick={hanadleSignIn}
@@ -172,6 +179,25 @@ export const Navbar: FC = () => {
               }}
             >
               Sign In
+            </Button>
+          </Box>
+        )}
+        {id && (
+          <Box sx={{ flexGrow: 0.05 }}>
+            <Button
+              onClick={handleLogout}
+              size="large"
+              sx={{
+                ml: -3,
+                color: theme.palette.primary.light,
+                bgcolor: theme.palette.primary.main,
+                "&:hover": {
+                  color: theme.palette.primary.dark, // Adjust hover color as desired
+                  cursor: "pointer", // Add cursor: pointer for hover feedback
+                },
+              }}
+            >
+              Log out
             </Button>
           </Box>
         )}

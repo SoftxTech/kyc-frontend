@@ -11,7 +11,7 @@ interface AuthGuardProps {
 
 export const AuthGuard: FC<AuthGuardProps> = (props) => {
   const { children } = props;
-  const auth = useAuth();
+  let auth = useAuth();
   const router = useRouter();
   const [checked, setChecked] = useState(false);
 

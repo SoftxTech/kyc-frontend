@@ -21,7 +21,7 @@ class AuthApi {
 
   async login(data: any) {
     const payload = {
-      label: data.label,
+      id: data,
     };
     // Create the session
     const expires = new Date(Date.now() + 10 * 1000);
@@ -30,13 +30,14 @@ class AuthApi {
     // Save the session in a cookie
     // cookies().set("session", session, { expires, httpOnly: true });
     const res = NextResponse.next();
+
     res.cookies.set({
       name: "session",
       value: session,
       httpOnly: true,
       expires: expires,
     });
-    return res;
+    return { res };
   }
 
   async logout() {
