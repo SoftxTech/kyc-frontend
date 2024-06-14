@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Camera } from "../components/Camera/Camera";
 import { CameraType } from "../components/Camera/types";
 import * as faceapi from "face-api.js";
-import { login } from "../lib";
+import { useAuth } from "../hooks/use-auth";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -154,6 +154,9 @@ const Login = () => {
   );
   const [torchToggled, setTorchToggled] = useState<boolean>(false);
   const [faceMatcher, setFaceMatcher] = useState<any>(null);
+
+  const { login, isAuthenticated } = useAuth();
+  const [matched, setMatched] = useState<any>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const load = async () => {
@@ -189,6 +192,16 @@ const Login = () => {
       console.log("hello");
     }
   }, [isLoaded]);
+  useEffect(() => {
+    if (matched) {
+      (async () => {
+        console.log("sssssssssssss");
+        await login(121323);
+      })();
+      console.log("matched", matched);
+      console.log("auth", isAuthenticated);
+    }
+  }, [matched]);
 
   return (
     <Wrapper>
@@ -260,15 +273,14 @@ const Login = () => {
                 facesToCheck
               );
 
-              facesToCheckAiData.forEach( async (face: any) => {
+              facesToCheckAiData.forEach((face: any) => {
                 const { detection, descriptor } = face;
                 //make a label, using the default
                 let label = faceMatcher.findBestMatch(descriptor).toString();
                 console.log(label);
-                if (label.includes("unknown")) return;
-                let options = { label: "Abdo" };
-                await login(options)
-                console.log(options);
+                if (!label.includes("unknown")) setMatched(true);
+                // let options = { label: "Abdo" };
+                // console.log(options);
               });
             }
           }}

@@ -13,6 +13,7 @@ import { SettingsButton } from "../components/settings-button";
 import { Toaster } from "react-hot-toast";
 import { createTheme } from "../theme";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
+import { AuthProvider } from "../contexts/jwt-context";
 
 type EnhancedAppProps = AppProps & {
   Component: NextPage;
@@ -36,27 +37,29 @@ const App: FC<EnhancedAppProps> = (props) => {
         />
         <meta name="keywords" content="KYC, kyc" />
       </Head>
-      <SettingsProvider>
-        <SettingsConsumer>
-          {({ settings }) => (
-            <ThemeProvider
-              theme={createTheme({
-                mode: settings.theme,
-              })}
-            >
-              <CssBaseline />
-              <Toaster position="top-center" />
-              <SettingsButton />
-              <ThirdwebProvider
-                clientId={process.env.CLIENTID}
-                activeChain={activeChain}
+      <AuthProvider>
+        <SettingsProvider>
+          <SettingsConsumer>
+            {({ settings }) => (
+              <ThemeProvider
+                theme={createTheme({
+                  mode: settings.theme,
+                })}
               >
-                <Component {...pageProps} />
-              </ThirdwebProvider>
-            </ThemeProvider>
-          )}
-        </SettingsConsumer>
-      </SettingsProvider>
+                <CssBaseline />
+                <Toaster position="top-center" />
+                <SettingsButton />
+                <ThirdwebProvider
+                  clientId={process.env.CLIENTID}
+                  activeChain={activeChain}
+                >
+                  <Component {...pageProps} />
+                </ThirdwebProvider>
+              </ThemeProvider>
+            )}
+          </SettingsConsumer>
+        </SettingsProvider>
+      </AuthProvider>
     </CacheProvider>
   );
 };

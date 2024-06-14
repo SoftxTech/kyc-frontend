@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FC } from "react";
 import { useRouter } from "next/router";
 /* eslint-disable */
@@ -30,7 +30,7 @@ export const SigninForm: FC = (props) => {
   // const isMounted = useMounted();
   const router = useRouter();
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState([]);
   // const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
@@ -49,14 +49,14 @@ export const SigninForm: FC = (props) => {
       try {
         setLoading(isLoading);
         console.log("values", values);
+        console.log("contract", contract);
 
         const result = await contract?.call("logIN", [
           Number(values._id),
           values.pass,
         ]);
         setUser(result);
-        console.log("result", result);
-        // router.push("/login");
+        console.log("result", parseInt(result[2]?._hex));
       } catch (err: any) {
         toast.error(err.message || "failed");
         console.log("error", error);
@@ -64,7 +64,9 @@ export const SigninForm: FC = (props) => {
       }
     },
   });
-
+  useEffect(() => {
+    user[0] ? router.push("/login") : toast.error("user not found");
+  }, [user]);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -133,7 +135,7 @@ export const SigninForm: FC = (props) => {
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
           value={formik.values.pass}
-          type={showPassword ? "text" : "pass"}
+          type={showPassword ? "text" : "password"}
           sx={{
             fontFamily: "sans-serif",
           }}
