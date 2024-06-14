@@ -196,4 +196,4 @@ const Info: NextPage = () => {
   );
 };
 
-export default <AuthGuard>Info</AuthGuard>;
+export default Info;

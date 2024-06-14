@@ -3,7 +3,7 @@ import type { FC, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { getSession } from "../lib";
+import { useAuth } from "../hooks/use-auth";
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -11,10 +11,7 @@ interface AuthGuardProps {
 
 export const AuthGuard: FC<AuthGuardProps> = (props) => {
   const { children } = props;
-  const auth = async () => {
-    const session = await getSession();
-    return session ? true : false;
-  };
+  const auth = useAuth();
   const router = useRouter();
   const [checked, setChecked] = useState(false);
 
@@ -23,8 +20,8 @@ export const AuthGuard: FC<AuthGuardProps> = (props) => {
       if (!router.isReady) {
         return;
       }
-
-      if (!auth) {
+      console.log(auth.isAuthenticated);
+      if (!auth.isAuthenticated) {
         router
           .push({
             pathname: "/",
