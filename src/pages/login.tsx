@@ -199,8 +199,8 @@ const Login = () => {
         await login(121323);
       })();
       console.log("matched", matched);
-      console.log("auth", isAuthenticated);
     }
+    console.log("auth", isAuthenticated);
   }, [matched]);
 
   return (
