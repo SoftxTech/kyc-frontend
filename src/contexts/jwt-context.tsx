@@ -2,7 +2,7 @@ import type { FC, ReactNode } from "react";
 import { createContext, useEffect, useReducer } from "react";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { authApi } from "../api/authApi";
+
 
 interface State {
   isInitialized: boolean;
@@ -167,8 +167,9 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   // }, [router.pathname]);
 
   const login = async (id: number): Promise<void> => {
-    const { res } = await authApi.login({
-      id,
+    const res = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify({id: id}),
     });
     console.log(res);
     if (true) {
@@ -187,7 +188,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   };
 
   const logout = async (): Promise<void> => {
-    await authApi.logout();
+    await fetch("/api/logout");
     dispatch({
       type: ActionType.LOGOUT,
     });
