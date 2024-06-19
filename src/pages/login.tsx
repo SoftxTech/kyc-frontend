@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { SigninForm } from "../components/login-form";
 import { User } from "../types/user";
+import toast from "react-hot-toast";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -303,7 +304,11 @@ const Login = () => {
                       .findBestMatch(descriptor)
                       .toString();
                     console.log(label);
-                    if (!label.includes("unknown")) setMatched(true);
+
+                    if (!label.includes("unknown")) {
+                      setMatched(true);
+                      toast.success("matched");
+                    }
                     // let options = { label: "Abdo" };
                     // console.log(options);
                   });

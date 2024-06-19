@@ -34,7 +34,7 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
   const router = useRouter();
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
   // const { login } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(isLoading);
   const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const formik = useFormik({
