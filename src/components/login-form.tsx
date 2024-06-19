@@ -22,11 +22,17 @@ import toast from "react-hot-toast";
 import { useContract } from "@thirdweb-dev/react";
 import { CONTRACT_ADDRESS } from "../const/addresses";
 
-export const SigninForm: FC = (props) => {
+interface SigninFormProps {
+  id: number;
+  setId: (id: number) => void;
+  setOpenForm: (open: boolean) => void;
+}
+
+export const SigninForm: FC<SigninFormProps> = (props) => {
+  const { id, setId, setOpenForm } = props;
   // const isMounted = useMounted();
   const router = useRouter();
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
-  const [user, setUser] = useState([]);
   // const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
@@ -42,22 +48,26 @@ export const SigninForm: FC = (props) => {
       pass: Yup.string().max(255).required("password Is Required"),
     }),
     onSubmit: async (values: any): Promise<void> => {
-      try {
-        setLoading(isLoading);
-        console.log("values", values);
-        console.log("contract", contract);
+      if (contract) {
+        try {
+          setLoading(isLoading);
+          console.log("values", values);
+          console.log("contract", contract);
 
-        const result = await contract?.call("logIN", [
-          Number(values._id),
-          values.pass,
-        ]);
-        console.log("result", parseInt(result[2]?._hex));
-        result[0] ? router.push("/login") : toast.error("user not found");
-        setUser(result);
-      } catch (err: any) {
-        toast.error(err.message || "user not found");
-        console.log("error", error);
-        setLoading(isLoading);
+          const result = await contract?.call("logIN", [
+            Number(values._id),
+            values.pass,
+          ]);
+
+          if (result[0]) {
+            setId(parseInt(result[2]?._hex));
+            setOpenForm(false);
+          } else toast.error("user not found");
+        } catch (err: any) {
+          toast.error(err.message || "user not found");
+          console.log("error", error);
+          setLoading(isLoading);
+        }
       }
     },
   });

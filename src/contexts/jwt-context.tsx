@@ -3,7 +3,6 @@ import { createContext, useEffect, useReducer } from "react";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 
-
 interface State {
   isInitialized: boolean;
   isAuthenticated: boolean;
@@ -119,60 +118,60 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const initialize = async (): Promise<void> => {
-  //     try {
-  //       const { success, data, store_plan } = await authApi.refreshAuth();
+  useEffect(() => {
+    const initialize = async (): Promise<void> => {
+      try {
+        const res = await fetch("/api/refresh", {
+          method: "POST",
+        });
+        const data = await res.json();
+        if (res.status == 201) {
+          const id = data.id;
 
-  //       if (success) {
-  //         const user = {
-  //           ...data,
+          dispatch({
+            type: ActionType.INITIALIZE,
+            payload: {
+              isAuthenticated: true,
+              id,
+            },
+          });
+        } else {
+          dispatch({
+            type: ActionType.INITIALIZE,
+            payload: {
+              isAuthenticated: false,
+              id: null,
+            },
+          });
+        }
+      } catch (err: any) {
+        if (err.code === 30018) {
+          await fetch("/api/logout", {
+            method: "POST",
+          });
+          router.push("/").catch(console.error);
+        }
+        dispatch({
+          type: ActionType.INITIALIZE,
+          payload: {
+            isAuthenticated: false,
+            id: null,
+          },
+        });
+      }
+    };
 
-  //         };
-
-  //         dispatch({
-  //           type: ActionType.INITIALIZE,
-  //           payload: {
-  //             isAuthenticated: true,
-  //             user,
-  //           },
-  //         });
-  //       } else {
-  //         dispatch({
-  //           type: ActionType.INITIALIZE,
-  //           payload: {
-  //             isAuthenticated: false,
-  //             id:null,
-  //           },
-  //         });
-  //       }
-  //     } catch (err:any) {
-  //       if (err.code === 30018) {
-  //         await authApi.logout();
-  //         router.push('/').catch(console.error);
-  //       }
-
-  //       dispatch({
-  //         type: ActionType.INITIALIZE,
-  //         payload: {
-  //           isAuthenticated: false,
-  //           id:null,
-  //         },
-  //       });
-  //     }
-  //   };
-
-  //   initialize();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [router.pathname]);
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.pathname]);
 
   const login = async (id: number): Promise<void> => {
     const res = await fetch("/api/login", {
       method: "POST",
-      body: JSON.stringify({id: id}),
+      body: JSON.stringify({ id: id }),
     });
     console.log(res);
-    if (true) {
+    if (res.status == 201) {
       dispatch({
         type: ActionType.INITIALIZE,
         payload: {

@@ -32,8 +32,8 @@ export const Navbar: FC = () => {
   const theme = useTheme();
   const router = useRouter();
   const address = useAddress();
-  let { id, logout } = useAuth();
-  const [openForm, setOpenForm] = useState(false);
+  let { id, logout, isAuthenticated } = useAuth();
+
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -55,17 +55,13 @@ export const Navbar: FC = () => {
     setAnchorElUser(null);
   };
   const hanadleSignIn = () => {
-    setOpenForm(true);
-  };
-  const handleClose = () => {
-    setOpenForm(false);
+    router.push("/login").catch(console.error);
   };
 
   const handleLogout = async (): Promise<void> => {
     await logout();
-    router.push("/").catch(console.error);
   };
-  console.log(id);
+  console.log(id, isAuthenticated);
   return (
     <AppBar position="fixed" sx={{ background: "none", border: "none" }}>
       <Toolbar sx={{ boxShadow: "none", mr: -5 }}>
@@ -202,29 +198,6 @@ export const Navbar: FC = () => {
           </Box>
         )}
       </Toolbar>
-      <Paper style={{ backgroundColor: "lightblue" }}>
-        <Dialog open={openForm} onClose={handleClose} maxWidth="xs" fullWidth>
-          <DialogTitle
-            style={{
-              margin: 3,
-              marginLeft: 0,
-              backgroundColor: theme.palette.primary.contrastText,
-              color: theme.palette.text.primary,
-            }}
-          >
-            <Typography variant="h5">Sign in</Typography>
-          </DialogTitle>
-          <DialogContent
-            style={{
-              minWidth: "390px",
-              minHeight: "370px",
-              backgroundColor: theme.palette.primary.contrastText,
-            }}
-          >
-            <SigninForm />
-          </DialogContent>
-        </Dialog>
-      </Paper>
     </AppBar>
   );
 };

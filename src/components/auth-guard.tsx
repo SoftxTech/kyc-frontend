@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import type { FC, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -11,30 +10,26 @@ interface AuthGuardProps {
 
 export const AuthGuard: FC<AuthGuardProps> = (props) => {
   const { children } = props;
-  let auth = useAuth();
+  let { isAuthenticated } = useAuth();
   const router = useRouter();
   const [checked, setChecked] = useState(false);
 
-  useEffect(
-    () => {
-      if (!router.isReady) {
-        return;
-      }
-      console.log(auth.isAuthenticated);
-      if (!auth.isAuthenticated) {
-        router
-          .push({
-            pathname: "/",
-            query: { returnUrl: router.asPath },
-          })
-          .catch(console.error);
-      } else {
-        setChecked(true);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router.isReady]
-  );
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+    console.log(isAuthenticated);
+    if (!isAuthenticated) {
+      router
+        .push({
+          pathname: "/",
+          query: { returnUrl: router.asPath },
+        })
+        .catch(console.error);
+    } else {
+      setChecked(true);
+    }
+  }, [isAuthenticated]);
 
   if (!checked) {
     return null;

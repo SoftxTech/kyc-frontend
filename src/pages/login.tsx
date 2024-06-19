@@ -4,6 +4,17 @@ import { Camera } from "../components/Camera/Camera";
 import { CameraType } from "../components/Camera/types";
 import * as faceapi from "face-api.js";
 import { useAuth } from "../hooks/use-auth";
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Paper,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { SigninForm } from "../components/login-form";
+import { User } from "../types/user";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -159,6 +170,16 @@ const Login = () => {
   const [matched, setMatched] = useState<any>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
+  const theme = useTheme();
+  const [openForm, setOpenForm] = useState(true);
+  const [id, setId] = useState<number>(0);
+
+  const handleClose = () => {
+    console.log(id);
+    if (id != 0) {
+      setOpenForm(false);
+    }
+  };
   const load = async () => {
     await Promise.all([
       faceapi.nets.ssdMobilenetv1.loadFromUri("models"),
@@ -196,7 +217,7 @@ const Login = () => {
     if (matched) {
       (async () => {
         console.log("sssssssssssss");
-        await login(121323);
+        await login(id);
       })();
       console.log("matched", matched);
     }
@@ -204,108 +225,138 @@ const Login = () => {
   }, [matched]);
 
   return (
-    <Wrapper>
-      {showImage ? (
-        <FullScreenImagePreview
-          image={image}
-          onClick={() => {
-            setShowImage(!showImage);
-          }}
-        />
+    <Box>
+      {id != 0 ? (
+        <Wrapper>
+          {showImage ? (
+            <FullScreenImagePreview
+              image={image}
+              onClick={() => {
+                setShowImage(!showImage);
+              }}
+            />
+          ) : (
+            <Camera
+              ref={camera}
+              aspectRatio="cover"
+              facingMode="environment"
+              numberOfCamerasCallback={(i: any) => setNumberOfCameras(i)}
+              videoSourceDeviceId={activeDeviceId}
+              errorMessages={{
+                noCameraAccessible:
+                  "No camera device accessible. Please connect your camera or try a different browser.",
+                permissionDenied:
+                  "Permission denied. Please refresh and give camera permission.",
+                switchCamera:
+                  "It is not possible to switch camera to different one because there is only one video device accessible.",
+                canvas: "Canvas is not supported.",
+              }}
+              videoReadyCallback={() => {
+                console.log("Video feed ready.");
+              }}
+            />
+          )}
+          <Control>
+            <select
+              title="control"
+              onChange={(event) => {
+                setActiveDeviceId(event.target.value);
+              }}
+            >
+              {devices.map((d) => (
+                <option key={d.deviceId} value={d.deviceId}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
+            <ImagePreview
+              image={image}
+              onClick={() => {
+                setShowImage(!showImage);
+              }}
+            />
+            <TakePhotoButton
+              onClick={async () => {
+                if (camera.current) {
+                  const photo = camera.current.takePhoto();
+                  const base64Image = photo.toString();
+
+                  setImage(base64Image);
+
+                  const blob = await fetch(image).then((res) => res.blob());
+
+                  const facesToCheck = await faceapi.bufferToImage(blob);
+
+                  let facesToCheckAiData = await faceapi
+                    .detectAllFaces(facesToCheck)
+                    .withFaceLandmarks()
+                    .withFaceDescriptors();
+                  facesToCheckAiData = faceapi.resizeResults(
+                    facesToCheckAiData,
+                    facesToCheck
+                  );
+
+                  facesToCheckAiData.forEach((face: any) => {
+                    const { detection, descriptor } = face;
+                    //make a label, using the default
+                    let label = faceMatcher
+                      .findBestMatch(descriptor)
+                      .toString();
+                    console.log(label);
+                    if (!label.includes("unknown")) setMatched(true);
+                    // let options = { label: "Abdo" };
+                    // console.log(options);
+                  });
+                }
+              }}
+            />
+            {camera.current?.torchSupported && (
+              <TorchButton
+                className={torchToggled ? "toggled" : ""}
+                onClick={() => {
+                  if (camera.current) {
+                    setTorchToggled(camera.current.toggleTorch());
+                  }
+                }}
+              />
+            )}
+            <ChangeFacingCameraButton
+              disabled={numberOfCameras <= 1}
+              onClick={() => {
+                if (camera.current) {
+                  const result = camera.current.switchCamera();
+                  console.log(result);
+                }
+              }}
+            />
+          </Control>
+        </Wrapper>
       ) : (
-        <Camera
-          ref={camera}
-          aspectRatio="cover"
-          facingMode="environment"
-          numberOfCamerasCallback={(i: any) => setNumberOfCameras(i)}
-          videoSourceDeviceId={activeDeviceId}
-          errorMessages={{
-            noCameraAccessible:
-              "No camera device accessible. Please connect your camera or try a different browser.",
-            permissionDenied:
-              "Permission denied. Please refresh and give camera permission.",
-            switchCamera:
-              "It is not possible to switch camera to different one because there is only one video device accessible.",
-            canvas: "Canvas is not supported.",
-          }}
-          videoReadyCallback={() => {
-            console.log("Video feed ready.");
-          }}
-        />
+        <Paper style={{ backgroundColor: "lightblue" }}>
+          <Dialog open={openForm} onClose={handleClose} maxWidth="xs" fullWidth>
+            <DialogTitle
+              style={{
+                margin: 3,
+                marginLeft: 0,
+                backgroundColor: theme.palette.primary.contrastText,
+                color: theme.palette.text.primary,
+              }}
+            >
+              <Typography variant="h5">Sign in</Typography>
+            </DialogTitle>
+            <DialogContent
+              style={{
+                minWidth: "390px",
+                minHeight: "370px",
+                backgroundColor: theme.palette.primary.contrastText,
+              }}
+            >
+              <SigninForm id={id} setId={setId} setOpenForm={setOpenForm} />
+            </DialogContent>
+          </Dialog>
+        </Paper>
       )}
-      <Control>
-        <select
-          title="control"
-          onChange={(event) => {
-            setActiveDeviceId(event.target.value);
-          }}
-        >
-          {devices.map((d) => (
-            <option key={d.deviceId} value={d.deviceId}>
-              {d.label}
-            </option>
-          ))}
-        </select>
-        <ImagePreview
-          image={image}
-          onClick={() => {
-            setShowImage(!showImage);
-          }}
-        />
-        <TakePhotoButton
-          onClick={async () => {
-            if (camera.current) {
-              const photo = camera.current.takePhoto();
-              const base64Image = photo.toString();
-
-              setImage(base64Image);
-
-              const blob = await fetch(image).then((res) => res.blob());
-
-              const facesToCheck = await faceapi.bufferToImage(blob);
-
-              let facesToCheckAiData = await faceapi
-                .detectAllFaces(facesToCheck)
-                .withFaceLandmarks()
-                .withFaceDescriptors();
-              facesToCheckAiData = faceapi.resizeResults(
-                facesToCheckAiData,
-                facesToCheck
-              );
-
-              facesToCheckAiData.forEach((face: any) => {
-                const { detection, descriptor } = face;
-                //make a label, using the default
-                let label = faceMatcher.findBestMatch(descriptor).toString();
-                console.log(label);
-                if (!label.includes("unknown")) setMatched(true);
-                // let options = { label: "Abdo" };
-                // console.log(options);
-              });
-            }
-          }}
-        />
-        {camera.current?.torchSupported && (
-          <TorchButton
-            className={torchToggled ? "toggled" : ""}
-            onClick={() => {
-              if (camera.current) {
-                setTorchToggled(camera.current.toggleTorch());
-              }
-            }}
-          />
-        )}
-        <ChangeFacingCameraButton
-          disabled={numberOfCameras <= 1}
-          onClick={() => {
-            if (camera.current) {
-              const result = camera.current.switchCamera();
-              console.log(result);
-            }
-          }}
-        />
-      </Control>
-    </Wrapper>
+    </Box>
   );
 };
 
