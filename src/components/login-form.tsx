@@ -7,24 +7,20 @@ import { useFormik } from "formik";
 import {
   Box,
   FormHelperText,
-  TextField,
   InputAdornment,
   IconButton,
   FormControl,
-  InputLabel,
-  OutlinedInput,
   useTheme,
   Typography,
+  TextField,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LoadingButton from "@mui/lab/LoadingButton";
 // import { useAuth } from '../../hooks/use-auth';
 import toast from "react-hot-toast";
-import { Label } from "@mui/icons-material";
-import { Web3Button, contractType, useContract } from "@thirdweb-dev/react";
+import { useContract } from "@thirdweb-dev/react";
 import { CONTRACT_ADDRESS } from "../const/addresses";
-import { Contract } from "ethers";
 
 export const SigninForm: FC = (props) => {
   // const isMounted = useMounted();
@@ -42,7 +38,7 @@ export const SigninForm: FC = (props) => {
       submit: null,
     },
     validationSchema: Yup.object({
-      _id: Yup.number().required("_id Is Required"),
+      _id: Yup.number().required("ID Is Required"),
       pass: Yup.string().max(255).required("password Is Required"),
     }),
     onSubmit: async (values: any): Promise<void> => {
@@ -55,18 +51,16 @@ export const SigninForm: FC = (props) => {
           Number(values._id),
           values.pass,
         ]);
-        setUser(result);
         console.log("result", parseInt(result[2]?._hex));
+        result[0] ? router.push("/login") : toast.error("user not found");
+        setUser(result);
       } catch (err: any) {
-        toast.error(err.message || "failed");
+        toast.error(err.message || "user not found");
         console.log("error", error);
         setLoading(isLoading);
       }
     },
   });
-  useEffect(() => {
-    user[0] ? router.push("/login") : toast.error("user not found");
-  }, [user]);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -94,7 +88,7 @@ export const SigninForm: FC = (props) => {
         >
           ID
         </Typography>
-        <OutlinedInput
+        <TextField
           // autoFocus
           error={Boolean(formik.touched._id && formik.errors._id)}
           fullWidth
@@ -104,7 +98,7 @@ export const SigninForm: FC = (props) => {
           onChange={formik.handleChange}
           type="id"
           value={formik.values._id}
-          InputProps={{
+          inputProps={{
             style: {
               fontFamily: "sans-serif",
               color: theme.palette.text.primary,
@@ -128,9 +122,10 @@ export const SigninForm: FC = (props) => {
         >
           Password
         </Typography>
-        <OutlinedInput
+        <TextField
           error={Boolean(formik.touched.pass && formik.errors.pass)}
           fullWidth
+          helperText={formik.touched.pass && formik.errors.pass}
           name="pass"
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
