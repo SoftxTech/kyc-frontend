@@ -1,4 +1,4 @@
-import * as React from "react";
+import { FC, MouseEvent, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,38 +9,62 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
-import { useTheme } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Paper,
+  useTheme,
+} from "@mui/material";
+import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
+import { SigninForm } from "../login-form";
+import { useRouter } from "next/router";
+import { useAuth } from "../../hooks/use-auth";
 
-const pages = ["Read Out Docs", "Contact", "Team", "Connect Wallet"];
+const pages = [
+  { name: "Read Out Docs", route: "/info" },
+  { name: "Contact", route: "/" },
+  { name: "Team", route: "/team" },
+];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export const Navbar: React.FC = () => {
+export const Navbar: FC = () => {
   const theme = useTheme();
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
+  const router = useRouter();
+  const address = useAddress();
+  let { id, logout, isAuthenticated } = useAuth();
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+  const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+  const handleRoute = (route: string) => {
+    router.push(route);
+  };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const hanadleSignIn = () => {
+    router.push("/login").catch(console.error);
+  };
 
+  const handleLogout = async (): Promise<void> => {
+    await logout();
+  };
+  console.log(id, isAuthenticated);
   return (
     <AppBar position="fixed" sx={{ background: "none", border: "none" }}>
-      <Toolbar sx={{ boxShadow: "none" }}>
+      <Toolbar sx={{ boxShadow: "none", mr: -5 }}>
         <GppGoodOutlinedIcon
           sx={{ display: { md: "flex" }, mr: 1 }}
           fontSize="large"
@@ -109,8 +133,8 @@ export const Navbar: React.FC = () => {
             }}
           >
             {pages.map((page) => (
-              <MenuItem key={page} onClick={handleCloseNavMenu}>
-                <Typography textAlign="center">{page}</Typography>
+              <MenuItem key={page.name} onClick={() => handleRoute(page.route)}>
+                <Typography textAlign="center">{page.name}</Typography>
               </MenuItem>
             ))}
           </Menu>
@@ -124,24 +148,55 @@ export const Navbar: React.FC = () => {
         >
           {pages.map((page) => (
             <Button
-              key={page}
-              onClick={handleCloseNavMenu}
+              key={page.name}
+              onClick={() => handleRoute(page.route)}
               sx={{ my: 2, color: "white", display: "block" }}
             >
-              {page}
+              {page.name}
             </Button>
           ))}
         </Box>
-        <Box sx={{ flexGrow: 0.05 }}>
-          <Button
-            sx={{
-              color: theme.palette.primary.contrastText,
-              bgcolor: theme.palette.primary.main,
-            }}
-          >
-            Sign In
-          </Button>
+        <Box sx={{ flexGrow: 0.05, m: 0, p: 0, width: "180px" }}>
+          <ConnectWallet modalSize="wide" />
         </Box>
+        {address && !id && (
+          <Box sx={{ flexGrow: 0.05 }}>
+            <Button
+              onClick={hanadleSignIn}
+              size="large"
+              sx={{
+                ml: -3,
+                color: theme.palette.primary.light,
+                bgcolor: theme.palette.primary.main,
+                "&:hover": {
+                  color: theme.palette.primary.dark, // Adjust hover color as desired
+                  cursor: "pointer", // Add cursor: pointer for hover feedback
+                },
+              }}
+            >
+              Sign In
+            </Button>
+          </Box>
+        )}
+        {id && (
+          <Box sx={{ flexGrow: 0.05 }}>
+            <Button
+              onClick={handleLogout}
+              size="large"
+              sx={{
+                ml: -3,
+                color: theme.palette.primary.light,
+                bgcolor: theme.palette.primary.main,
+                "&:hover": {
+                  color: theme.palette.primary.dark, // Adjust hover color as desired
+                  cursor: "pointer", // Add cursor: pointer for hover feedback
+                },
+              }}
+            >
+              Log out
+            </Button>
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );

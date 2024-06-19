@@ -7,6 +7,7 @@
 
 # testing
 /coverage
+20240414_162447.jpg
 
 # next.js
 /.next/
@@ -28,7 +29,6 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
-
 # vercel
 .vercel
 

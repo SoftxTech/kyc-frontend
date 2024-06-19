@@ -5,13 +5,13 @@ import { ThemeOptions } from "@mui/material";
 const neutral = {
   100: "#FFFCF2",
   200: "#FFF5E4",
-  300: "#E9E2D6",
+  300: "#ffffff",
   400: "#989088",
   500: "#625D58",
-  600: "#403D39",
+  600: "#333333",
   700: "#302D2A",
   800: "#292724",
-  900: "#252321",
+  900: "#000000",
 };
 
 const background = {
@@ -31,7 +31,7 @@ const primary = {
 const secondary = {
   main: "#FFFFFF",
   light: "#3FC79A",
-  dark: "#253781",
+  dark: neutral[900],
   contrastText: "#FFFFFF",
 };
 
