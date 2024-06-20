@@ -12,6 +12,8 @@ import { CssBaseline } from "@mui/material";
 import { SettingsButton } from "../components/settings-button";
 import { Toaster } from "react-hot-toast";
 import { createTheme } from "../theme";
+import { ThirdwebProvider } from "@thirdweb-dev/react";
+import { AuthProvider } from "../contexts/jwt-context";
 
 type EnhancedAppProps = AppProps & {
   Component: NextPage;
@@ -19,6 +21,7 @@ type EnhancedAppProps = AppProps & {
 };
 
 const clientSideEmotionCache = createEmotionCache();
+const activeChain = "sepolia";
 
 const App: FC<EnhancedAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
@@ -34,22 +37,29 @@ const App: FC<EnhancedAppProps> = (props) => {
         />
         <meta name="keywords" content="KYC, kyc" />
       </Head>
-      <SettingsProvider>
-        <SettingsConsumer>
-          {({ settings }) => (
-            <ThemeProvider
-              theme={createTheme({
-                mode: settings.theme,
-              })}
-            >
-              <CssBaseline />
-              <Toaster position="top-center" />
-              <SettingsButton />
-                <Component {...pageProps} />     
-            </ThemeProvider>
-          )}
-        </SettingsConsumer>
-      </SettingsProvider>
+      <AuthProvider>
+        <SettingsProvider>
+          <SettingsConsumer>
+            {({ settings }) => (
+              <ThemeProvider
+                theme={createTheme({
+                  mode: settings.theme,
+                })}
+              >
+                <CssBaseline />
+                <Toaster position="top-center" />
+                <SettingsButton />
+                <ThirdwebProvider
+                  clientId={process.env.CLIENTID}
+                  activeChain={activeChain}
+                >
+                  <Component {...pageProps} />
+                </ThirdwebProvider>
+              </ThemeProvider>
+            )}
+          </SettingsConsumer>
+        </SettingsProvider>
+      </AuthProvider>
     </CacheProvider>
   );
 };

@@ -1,10 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import { Box, Typography, Theme, useMediaQuery } from "@mui/material";
+import { Box, Typography, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { Layout } from "../components/layout/layout";
-import { useTheme } from "@emotion/react";
-import {} from "@mui/material";
 
 const Home: NextPage = () => {
   const theme = useTheme();
