@@ -18,8 +18,8 @@
     "@mui/material": "^5.15.19",
     "@thirdweb-dev/react": "^4.6.31",
     "face-api.js": "^0.22.2",
-    "lodash": "^4.17.21",
     "formik": "^2.4.6",
+    "lodash": "^4.17.21",
     "next": "14.1.0",
     "react": "18.2.0",
     "react-camera-pro": "^1.4.0",
@@ -27,6 +27,7 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.0.1",
     "styled-components": "^6.1.11",
+    "thirdweb": "^5.29.6",
     "ts-jose": "^5.4.0",
     "yup": "^1.4.0"
   },

@@ -69,6 +69,7 @@ const text = {
   secondary: "#FFE500",
   light: neutral[300],
   offLight: "#CCC5B9",
+  dark: neutral[900],
   disabled: "rgba(55, 65, 81, 0.48)",
 };
 

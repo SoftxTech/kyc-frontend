@@ -30,11 +30,8 @@ interface SigninFormProps {
 
 export const SigninForm: FC<SigninFormProps> = (props) => {
   const { id, setId, setOpenForm } = props;
-  // const isMounted = useMounted();
-  const router = useRouter();
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
-  // const { login } = useAuth();
-  const [loading, setLoading] = useState(isLoading);
+  const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const formik = useFormik({
@@ -58,7 +55,7 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
             Number(values._id),
             values.pass,
           ]);
-
+          console.log(result);
           if (result[0]) {
             setId(parseInt(result[2]?._hex));
             setOpenForm(false);

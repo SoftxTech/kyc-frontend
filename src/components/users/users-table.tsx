@@ -18,16 +18,15 @@ import Add from "@mui/icons-material/Add";
 import Delete from "@mui/icons-material/Delete";
 import { UsersForm } from "./users-form";
 import { UsersRow } from "./users-row";
-import { useMounted } from "src/hooks/use-mounted";
-import { User } from "../types/user";
+import { useMounted } from "../../hooks/use-mounted";
+import { User } from "../../types/user";
 import toast from "react-hot-toast";
 
 export interface Data {
   name: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
+  id: string;
+  role: string;
+  action: string;
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -94,28 +93,22 @@ export const UsersTable = () => {
       label: "Name",
     },
     {
-      id: "first_name",
+      id: "id",
       numeric: false,
       disablePadding: true,
       label: "First Name",
     },
     {
-      id: "last_name",
+      id: "role",
       numeric: false,
       disablePadding: true,
       label: "Last Name",
     },
     {
-      id: "email",
+      id: "action",
       numeric: true,
       disablePadding: false,
       label: "Email",
-    },
-    {
-      id: "phone",
-      numeric: true,
-      disablePadding: false,
-      label: "Phone",
     },
   ];
 

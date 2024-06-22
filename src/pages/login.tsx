@@ -16,6 +16,7 @@ import {
 import { SigninForm } from "../components/login-form";
 import { User } from "../types/user";
 import toast from "react-hot-toast";
+import { NextPage } from "next";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -155,7 +156,7 @@ const FullScreenImagePreview = styled.div<{ image: string | null }>`
   background-position: center;
 `;
 
-const Login = () => {
+const Login: NextPage = () => {
   const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [image, setImage] = useState<string>("");
   const [showImage, setShowImage] = useState<boolean>(false);
@@ -183,10 +184,10 @@ const Login = () => {
   };
   const load = async () => {
     await Promise.all([
-      faceapi.nets.ssdMobilenetv1.loadFromUri("models"),
-      faceapi.nets.faceLandmark68Net.loadFromUri("models"),
-      faceapi.nets.faceRecognitionNet.loadFromUri("models"),
-      faceapi.nets.ageGenderNet.loadFromUri("models"),
+      faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
+      faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+      faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+      faceapi.nets.ageGenderNet.loadFromUri("/models"),
     ]);
     console.log("loaded");
     setIsLoaded(true);
@@ -203,7 +204,7 @@ const Login = () => {
         setFaceMatcher(
           new faceapi.FaceMatcher(
             await faceapi
-              .detectAllFaces(await faceapi.fetchImage("20240608_154330.jpg"))
+              .detectAllFaces(await faceapi.fetchImage("/20240608_154330.jpg"))
               .withFaceLandmarks()
               .withFaceDescriptors()
           )
