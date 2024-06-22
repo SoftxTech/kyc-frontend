@@ -172,7 +172,6 @@ const Login = () => {
   const [matched, setMatched] = useState<any>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-
   const theme = useTheme();
   const [openForm, setOpenForm] = useState(true);
   const [id, setId] = useState<number>(0);
@@ -203,11 +202,12 @@ const Login = () => {
       (async () => {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter((i) => i.kind == "videoinput");
-        const img = await downloadFile(hash)
+        const img = await downloadFile(hash);
+
         setFaceMatcher(
           new faceapi.FaceMatcher(
             await faceapi
-              .detectAllFaces(await faceapi.fetchImage("20240608_154330.jpg"))
+              .detectAllFaces(await faceapi.fetchImage(img.url))
               .withFaceLandmarks()
               .withFaceDescriptors()
           )
@@ -221,7 +221,6 @@ const Login = () => {
   useEffect(() => {
     if (matched) {
       (async () => {
-        console.log("sssssssssssss");
         await login(id);
       })();
       console.log("matched", matched);
@@ -313,8 +312,6 @@ const Login = () => {
                       setMatched(true);
                       toast.success("matched");
                     }
-                    // let options = { label: "Abdo" };
-                    // console.log(options);
                   });
                 }
               }}
@@ -360,7 +357,12 @@ const Login = () => {
                 backgroundColor: theme.palette.primary.contrastText,
               }}
             >
-              <SigninForm id={id} setId={setId}  setHash={setHash} setOpenForm={setOpenForm} />
+              <SigninForm
+                id={id}
+                setId={setId}
+                setHash={setHash}
+                setOpenForm={setOpenForm}
+              />
             </DialogContent>
           </Dialog>
         </Paper>
