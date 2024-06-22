@@ -16,6 +16,7 @@ import {
 import { SigninForm } from "../components/login-form";
 import { User } from "../types/user";
 import toast from "react-hot-toast";
+import { downloadFile } from "../utils/ipfs";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -171,9 +172,11 @@ const Login = () => {
   const [matched, setMatched] = useState<any>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
+
   const theme = useTheme();
   const [openForm, setOpenForm] = useState(true);
   const [id, setId] = useState<number>(0);
+  const [hash, setHash] = useState<string>("");
 
   const handleClose = () => {
     console.log(id);
@@ -183,10 +186,10 @@ const Login = () => {
   };
   const load = async () => {
     await Promise.all([
-      faceapi.nets.ssdMobilenetv1.loadFromUri("models"),
-      faceapi.nets.faceLandmark68Net.loadFromUri("models"),
-      faceapi.nets.faceRecognitionNet.loadFromUri("models"),
-      faceapi.nets.ageGenderNet.loadFromUri("models"),
+      faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
+      faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+      faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+      faceapi.nets.ageGenderNet.loadFromUri("/models"),
     ]);
     console.log("loaded");
     setIsLoaded(true);
@@ -196,10 +199,11 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && hash !== "") {
       (async () => {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter((i) => i.kind == "videoinput");
+        const img = await downloadFile(hash)
         setFaceMatcher(
           new faceapi.FaceMatcher(
             await faceapi
@@ -213,7 +217,7 @@ const Login = () => {
       })();
       console.log("hello");
     }
-  }, [isLoaded]);
+  }, [isLoaded, hash]);
   useEffect(() => {
     if (matched) {
       (async () => {
@@ -356,7 +360,7 @@ const Login = () => {
                 backgroundColor: theme.palette.primary.contrastText,
               }}
             >
-              <SigninForm id={id} setId={setId} setOpenForm={setOpenForm} />
+              <SigninForm id={id} setId={setId}  setHash={setHash} setOpenForm={setOpenForm} />
             </DialogContent>
           </Dialog>
         </Paper>

@@ -21,6 +21,6 @@ export async function downloadFile(uri: string) {
       client: client,
       uri: `ipfs://${uri}`,
   });
-
-  console.log(file);
+  console.log(file)
+  return file;
 }
