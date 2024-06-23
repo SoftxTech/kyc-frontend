@@ -24,17 +24,18 @@ import { CONTRACT_ADDRESS } from "../const/addresses";
 
 interface SigninFormProps {
   id: number;
+  setHash: (hash: string) => void;
   setId: (id: number) => void;
   setOpenForm: (open: boolean) => void;
 }
 
 export const SigninForm: FC<SigninFormProps> = (props) => {
-  const { id, setId, setOpenForm } = props;
+  const { id, setHash, setId, setOpenForm } = props;
   // const isMounted = useMounted();
   const router = useRouter();
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
   // const { login } = useAuth();
-  const [loading, setLoading] = useState(isLoading);
+  const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const formik = useFormik({
@@ -60,6 +61,8 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
           ]);
 
           if (result[0]) {
+            console.log(result);
+            setHash(result[1]);
             setId(parseInt(result[2]?._hex));
             setOpenForm(false);
           } else toast.error("user not found");
