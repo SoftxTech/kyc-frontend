@@ -16,7 +16,7 @@ import {
 import { SigninForm } from "../components/login-form";
 import { User } from "../types/user";
 import toast from "react-hot-toast";
-import { NextPage } from "next";
+import { downloadFile } from "../utils/ipfs";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -175,6 +175,7 @@ const Login: NextPage = () => {
   const theme = useTheme();
   const [openForm, setOpenForm] = useState(true);
   const [id, setId] = useState<number>(0);
+  const [hash, setHash] = useState<string>("");
 
   const handleClose = () => {
     console.log(id);
@@ -197,14 +198,16 @@ const Login: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && hash !== "") {
       (async () => {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter((i) => i.kind == "videoinput");
+        const img = await downloadFile(hash);
+
         setFaceMatcher(
           new faceapi.FaceMatcher(
             await faceapi
-              .detectAllFaces(await faceapi.fetchImage("/20240608_154330.jpg"))
+              .detectAllFaces(await faceapi.fetchImage(img.url))
               .withFaceLandmarks()
               .withFaceDescriptors()
           )
@@ -214,11 +217,10 @@ const Login: NextPage = () => {
       })();
       console.log("hello");
     }
-  }, [isLoaded]);
+  }, [isLoaded, hash]);
   useEffect(() => {
     if (matched) {
       (async () => {
-        console.log("sssssssssssss");
         await login(id);
       })();
       console.log("matched", matched);
@@ -310,8 +312,6 @@ const Login: NextPage = () => {
                       setMatched(true);
                       toast.success("matched");
                     }
-                    // let options = { label: "Abdo" };
-                    // console.log(options);
                   });
                 }
               }}
@@ -357,7 +357,12 @@ const Login: NextPage = () => {
                 backgroundColor: theme.palette.primary.contrastText,
               }}
             >
-              <SigninForm id={id} setId={setId} setOpenForm={setOpenForm} />
+              <SigninForm
+                id={id}
+                setId={setId}
+                setHash={setHash}
+                setOpenForm={setOpenForm}
+              />
             </DialogContent>
           </Dialog>
         </Paper>

@@ -24,6 +24,7 @@ import { CONTRACT_ADDRESS } from "../const/addresses";
 
 interface SigninFormProps {
   id: number;
+  setHash: (hash: string) => void;
   setId: (id: number) => void;
   setOpenForm: (open: boolean) => void;
 }
@@ -57,6 +58,8 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
           ]);
           console.log(result);
           if (result[0]) {
+            console.log(result);
+            setHash(result[1]);
             setId(parseInt(result[2]?._hex));
             setOpenForm(false);
           } else toast.error("user not found");
