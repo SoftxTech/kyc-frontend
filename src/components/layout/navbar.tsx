@@ -63,7 +63,10 @@ export const Navbar: FC = () => {
   };
   console.log(id, isAuthenticated);
   return (
-    <AppBar position="fixed" sx={{ background: "none", border: "none" }}>
+    <AppBar
+      position="fixed"
+      sx={{ background: "none", border: "none", position: "sticky" }}
+    >
       <Toolbar sx={{ boxShadow: "none", mr: -5 }}>
         <GppGoodOutlinedIcon
           sx={{ display: { md: "flex" }, mr: 1 }}
@@ -159,7 +162,7 @@ export const Navbar: FC = () => {
         <Box sx={{ flexGrow: 0.05, m: 0, p: 0, width: "180px" }}>
           <ConnectWallet modalSize="wide" />
         </Box>
-        {address && !id && (
+        {address && !isAuthenticated && (
           <Box sx={{ flexGrow: 0.05 }}>
             <Button
               onClick={hanadleSignIn}
@@ -178,7 +181,7 @@ export const Navbar: FC = () => {
             </Button>
           </Box>
         )}
-        {id && (
+        {isAuthenticated && (
           <Box sx={{ flexGrow: 0.05 }}>
             <Button
               onClick={handleLogout}

@@ -1,11 +1,11 @@
 import type { NextPage } from "next";
-import { Box, Theme, useMediaQuery, useTheme, InputBase } from "@mui/material";
+import { Box, InputBase, Typography } from "@mui/material";
 import { Layout } from "../components/layout/layout";
 import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { useContract } from "@thirdweb-dev/react";
 import { CONTRACT_ADDRESS } from "../const/addresses";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { User } from "../types/user";
 import { Profile } from "../components/users/users-profile";
 
@@ -51,17 +51,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Query: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
-  const [abi, setABI] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState<User>();
-  const theme = useTheme();
-  const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up("md"), {
-    noSsr: false,
-  });
 
   const getUser = async (id: number) => {
     if (contract) {
-      // setABI(contract.contractWrapper.abi);
       const result = await contract.call("getPerson", [id]);
       console.log(result);
       setUser(result);
@@ -78,14 +72,7 @@ const Query: NextPage = () => {
   // });
   return (
     <Layout>
-      <Box
-        sx={{
-          backgroundImage: `url(${"/kyc_bg.svg"})`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
+      <Box>
         <Box
           sx={{
             display: "flex",
@@ -110,7 +97,7 @@ const Query: NextPage = () => {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>{" "}
-          {user && (
+          {parseInt(user?.NID?._hex) != 0 && user && (
             <Box
               sx={{
                 display: "flex",
@@ -120,7 +107,27 @@ const Query: NextPage = () => {
                 padding: 3,
               }}
             >
-              <Profile></Profile>
+              <Profile
+                ID={Number(searchTerm)}
+                user={user}
+                getUser={getUser}
+              ></Profile>
+            </Box>
+          )}
+          {parseInt(user?.NID?._hex) == 0 && user && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 3,
+              }}
+            >
+              {" "}
+              <Typography variant="h4" color="error">
+                User not found
+              </Typography>{" "}
             </Box>
           )}
         </Box>

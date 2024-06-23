@@ -23,7 +23,7 @@ export const Footer: FC<FooterProps> = (props) => {
         margin: "0px",
         bottom: "16px",
         color: theme.palette.primary.contrastText,
-        position: "fixed",
+        position: "sticky",
         width: "100%",
         padding: theme.spacing(2),
         textAlign: "center",

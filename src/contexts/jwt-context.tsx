@@ -12,7 +12,7 @@ interface State {
 export interface AuthContextValue extends State {
   platform: "JWT";
   login: (id: number) => Promise<void>;
-  // authRefresh: () => Promise<void>;
+  authRefresh: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -109,7 +109,7 @@ export const AuthContext = createContext<AuthContextValue>({
   ...initialState,
   platform: "JWT",
   login: () => Promise.resolve(),
-  // authRefresh: () => Promise.resolve(),
+  authRefresh: () => Promise.resolve(),
   logout: () => Promise.resolve(),
 });
 
@@ -196,13 +196,56 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
 
     router.push("/").catch(console.error);
   };
+
+  const authRefresh = async (): Promise<void> => {
+    try {
+      const res = await fetch("/api/refresh", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.status == 201) {
+        const id = data.id;
+
+        dispatch({
+          type: ActionType.INITIALIZE,
+          payload: {
+            isAuthenticated: true,
+            id,
+          },
+        });
+      } else {
+        dispatch({
+          type: ActionType.INITIALIZE,
+          payload: {
+            isAuthenticated: false,
+            id: null,
+          },
+        });
+      }
+    } catch (err: any) {
+      if (err.code === 30018) {
+        await fetch("/api/logout", {
+          method: "POST",
+        });
+        router.push("/").catch(console.error);
+      }
+      dispatch({
+        type: ActionType.INITIALIZE,
+        payload: {
+          isAuthenticated: false,
+          id: null,
+        },
+      });
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
         ...state,
         platform: "JWT",
         login,
-        // authRefresh,
+        authRefresh,
         logout,
       }}
     >
