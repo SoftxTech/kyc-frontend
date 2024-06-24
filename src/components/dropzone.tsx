@@ -39,23 +39,17 @@ const DropzoneText: React.CSSProperties = {
 
 const ImagePreview: React.CSSProperties = {
   display: "flex",
-  maxWidth: "100%",
-  maxHeight: "100%",
+  maxWidth: "50%",
+  maxHeight: "50%",
   margin: "auto",
   borderRadius: "50%",
 };
 
-const FileName: React.CSSProperties = {
-  display: "flex",
-  fontSize: "14px",
-  marginTop: "8px",
-};
 interface DropzoneComponentProps {
-  preview?: string;
   setPreview: (p: string) => void;
 }
 const DropzoneComponent: FC<DropzoneComponentProps> = (props) => {
-  const { preview, setPreview } = props;
+  const { setPreview } = props;
   const [files, setFiles] = useState<FileWithPreview[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -94,11 +88,7 @@ const DropzoneComponent: FC<DropzoneComponentProps> = (props) => {
       <p style={DropzoneText}>
         Drag and drop your image here, or click to select image
       </p>
-      {preview ? (
-        <img style={ImagePreview} src={preview} alt={"User image"} />
-      ) : (
-        <ul>{fileList}</ul>
-      )}
+      <ul>{fileList}</ul>
     </div>
   );
 };

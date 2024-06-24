@@ -7,7 +7,7 @@ import { useContract } from "@thirdweb-dev/react";
 import { CONTRACT_ADDRESS } from "../const/addresses";
 import { useState } from "react";
 import { User } from "../types/user";
-import { Profile } from "../components/users/users-profile";
+import { Profile } from "../components/users/user-profile";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -53,12 +53,14 @@ const Query: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
   const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState<User>();
+  const [found, setFound] = useState(false);
 
   const getUser = async (id: number) => {
     if (contract) {
       const result = await contract.call("getPerson", [id]);
       console.log(result);
-      setUser(result);
+      setUser(result[0]);
+      setFound(result[1]);
     }
   };
   const handleClick = (event: any) => {
@@ -97,7 +99,7 @@ const Query: NextPage = () => {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>{" "}
-          {parseInt(user?.NID?._hex) != 0 && user && (
+          {found && user && (
             <Box
               sx={{
                 display: "flex",
@@ -114,7 +116,7 @@ const Query: NextPage = () => {
               ></Profile>
             </Box>
           )}
-          {parseInt(user?.NID?._hex) == 0 && user && (
+          {!found && user && (
             <Box
               sx={{
                 display: "flex",

@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {
@@ -23,10 +23,17 @@ import moment from "moment";
 import { downloadFile } from "../../utils/ipfs";
 import DropzoneComponent from "../dropzone";
 
+const ImagePreview: React.CSSProperties = {
+  display: "flex",
+  maxWidth: "50%",
+  maxHeight: "50%",
+  margin: "auto",
+  borderRadius: "50%",
+};
+
 interface profileProps {
   ID: number;
   user: any;
-  add?: boolean;
   getUser: (id: number) => void;
 }
 const roles = [
@@ -44,7 +51,7 @@ const ms = [
 ];
 export const Profile: FC<profileProps> = (props) => {
   const { ID, user, getUser } = props;
-  const [preview, setPreview] = useState<null | string>(null);
+  const [preview, setPreview] = useState<null | string>("");
   const [userData, setUserData] = useState<any>({
     fullName: user?.fullName,
     job: user?.job,
@@ -133,16 +140,7 @@ export const Profile: FC<profileProps> = (props) => {
       year: parseInt(user?.edu[0]._hex),
       //}
     });
-    (async () => {
-      const img = await downloadFile(user?.info?.image);
-      console.log(img.url);
-      formik.setValues({ ...formik.values, image: img.url });
-      setPreview(formik.values.image);
-      console.log(preview);
-      // const image = await fetch(img.url);
-      // console.log(image);
-    })();
-  }, [user, preview]);
+  }, [user]);
 
   const formik = useFormik({
     initialValues: {
@@ -198,10 +196,17 @@ export const Profile: FC<profileProps> = (props) => {
   //   }
   // };
 
+  // useEffect(() => {
+  //   console.log("user", user);
+  //   console.log("formic", formik.values);
+  // }, [formik.values]);
   useEffect(() => {
-    console.log("user", user);
-    console.log("formic", formik.values);
-  }, [formik.values]);
+    (async () => {
+      const img = await downloadFile(user?.info?.image);
+      formik.setValues({ ...formik.values, image: img.url });
+      setPreview(formik.values.image);
+    })();
+  });
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <Grid
@@ -578,8 +583,9 @@ export const Profile: FC<profileProps> = (props) => {
                 }}
               />
               {preview && (
-                <DropzoneComponent preview={preview} setPreview={setPreview} />
+                <img style={ImagePreview} src={preview} alt={"User image"} />
               )}
+              <DropzoneComponent setPreview={setPreview} />
             </Paper>
             <Typography variant="h4" sx={{ textAlign: "left" }}>
               Education
