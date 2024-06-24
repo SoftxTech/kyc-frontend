@@ -23,21 +23,20 @@ import { useContract } from "@thirdweb-dev/react";
 import { CONTRACT_ADDRESS } from "../const/addresses";
 
 interface SigninFormProps {
-  id: number;
   setHash: (hash: string) => void;
   setId: (id: number) => void;
   setOpenForm: (open: boolean) => void;
 }
 
 export const SigninForm: FC<SigninFormProps> = (props) => {
-  const { id, setId, setOpenForm } = props;
+  const { setId, setOpenForm, setHash } = props;
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const formik = useFormik({
     initialValues: {
-      _id: "",
+      _id: Number(),
       pass: "",
       submit: null,
     },
@@ -102,11 +101,12 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
           // autoFocus
           error={Boolean(formik.touched._id && formik.errors._id)}
           fullWidth
+          // @ts-ignore
           helperText={formik.touched._id && formik.errors._id}
           name="_id"
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
-          type="id"
+          type="text"
           value={formik.values._id}
           inputProps={{
             style: {
@@ -135,6 +135,7 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
         <TextField
           error={Boolean(formik.touched.pass && formik.errors.pass)}
           fullWidth
+          // @ts-ignore
           helperText={formik.touched.pass && formik.errors.pass}
           name="pass"
           onBlur={formik.handleBlur}

@@ -17,6 +17,7 @@ import { SigninForm } from "../components/login-form";
 import { User } from "../types/user";
 import toast from "react-hot-toast";
 import { downloadFile } from "../utils/ipfs";
+import { NextPage } from "next";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -358,7 +359,6 @@ const Login: NextPage = () => {
               }}
             >
               <SigninForm
-                id={id}
                 setId={setId}
                 setHash={setHash}
                 setOpenForm={setOpenForm}

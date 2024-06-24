@@ -20,6 +20,8 @@ import toast from "react-hot-toast";
 import * as yup from "yup";
 import { useMounted } from "../../hooks/use-mounted";
 import moment from "moment";
+import { downloadFile } from "../../utils/ipfs";
+import DropzoneComponent from "../dropzone";
 
 interface profileProps {
   ID: number;
@@ -42,8 +44,7 @@ const ms = [
 ];
 export const Profile: FC<profileProps> = (props) => {
   const { ID, user, getUser } = props;
-  const isMounted = useMounted();
-  const theme = useTheme();
+  const [preview, setPreview] = useState<null | string>(null);
   const [userData, setUserData] = useState<any>({
     fullName: user?.fullName,
     job: user?.job,
@@ -51,14 +52,13 @@ export const Profile: FC<profileProps> = (props) => {
     phone_number: user?.phone_number,
     gender: user?.gender,
     person_wallet_address: user?.person_wallet_address,
-    // permission: user?.permission,
     role: user?.role,
     NID: parseInt(user?.NID?._hex),
     bod: moment.unix(parseInt(user?.bod?._hex)).format("L"),
     // info: {
     home_address: user?.info?.home_address,
     passport: user?.info?.passport,
-    image: user?.info?.image,
+    image: preview,
     license_number: parseInt(user?.info[0]._hex),
     ms: user?.info[5],
     // },
@@ -113,14 +113,13 @@ export const Profile: FC<profileProps> = (props) => {
       phone_number: user?.phone_number,
       gender: user?.gender,
       person_wallet_address: user?.person_wallet_address,
-      // permission: user?.permission,
       role: user?.role,
       NID: parseInt(user?.NID?._hex),
       bod: moment.unix(parseInt(user?.bod?._hex)).format("L"),
       // info: {
       home_address: user?.info?.home_address,
       passport: user?.info?.passport,
-      image: user?.info?.image,
+      image: preview,
       license_number: parseInt(user?.info[0]._hex),
       ms: user?.info[5],
       // },
@@ -134,7 +133,17 @@ export const Profile: FC<profileProps> = (props) => {
       year: parseInt(user?.edu[0]._hex),
       //}
     });
-  }, [user]);
+    (async () => {
+      const img = await downloadFile(user?.info?.image);
+      console.log(img.url);
+      formik.setValues({ ...formik.values, image: img.url });
+      setPreview(formik.values.image);
+      console.log(preview);
+      // const image = await fetch(img.url);
+      // console.log(image);
+    })();
+  }, [user, preview]);
+
   const formik = useFormik({
     initialValues: {
       ...userData,
@@ -188,36 +197,11 @@ export const Profile: FC<profileProps> = (props) => {
   //     return { success: false };
   //   }
   // };
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [preview, setPreview] = useState(formik.values.image);
-
-  const onSelectFile = (e) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      setSelectedFile(null);
-      return;
-    }
-
-    // Get the first selected file
-    setSelectedFile(e.target.files[0]);
-  };
-
-  useEffect(() => {
-    if (!selectedFile) {
-      setPreview(null);
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(selectedFile);
-    setPreview(objectUrl);
-
-    // Clean up the preview URL when the component unmounts
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [selectedFile]);
 
   useEffect(() => {
     console.log("user", user);
     console.log("formic", formik.values);
-  }, []);
+  }, [formik.values]);
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <Grid
@@ -586,17 +570,16 @@ export const Profile: FC<profileProps> = (props) => {
                 margin="normal"
                 id="bod"
                 name="bod"
-                type="date"
+                type="text"
                 onChange={formik.handleChange}
                 value={formik.values.bod}
                 InputLabelProps={{
                   shrink: true,
                 }}
               />
-              <div>
-                {/* <Input type="file" accept="image/*" onChange={onSelectFile} /> */}
-                {<img src={preview} alt="Uploaded preview" />}
-              </div>
+              {preview && (
+                <DropzoneComponent preview={preview} setPreview={setPreview} />
+              )}
             </Paper>
             <Typography variant="h4" sx={{ textAlign: "left" }}>
               Education
