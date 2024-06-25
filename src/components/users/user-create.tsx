@@ -22,12 +22,10 @@ import { useMounted } from "../../hooks/use-mounted";
 import moment from "moment";
 import { downloadFile } from "../../utils/ipfs";
 import DropzoneComponent from "../dropzone";
+import { useContract } from "@thirdweb-dev/react";
+import { CONTRACT_ADDRESS } from "../../const/addresses";
+import { useAuth } from "../../hooks/use-auth";
 
-interface profileProps {
-  ID: number;
-  user: any;
-  getUser: (id: number) => void;
-}
 const roles = [
   { id: 0, name: "Admin" },
   { id: 1, name: "User" },
@@ -36,128 +34,58 @@ const genders = [
   { id: 0, name: "Male" },
   { id: 1, name: "Female" },
 ];
-export const UserForm: FC<profileProps> = (props) => {
-  const { ID, user, getUser } = props;
-  const [preview, setPreview] = useState<null | string>(null);
-  const [userData, setUserData] = useState<any>({
-    fullName: user?.fullName,
-    job: user?.job,
-    id: user?.sign[0],
-    gender: user?.gender,
-    role: user?.role,
-    bod: moment.unix(parseInt(user?.bod?._hex)).format("L"),
-    image: preview,
-  });
-
-  // const getProfile = async (id: number) => {
-  //   if (contract) {
-  //     try {
-  //       const result = await contract?.call("logIN", [
-  //         Number(values._id),
-  //         values.pass,
-  //       ]);
-
-  //       } else toast.error("user not found");
-  //     } catch (err: any) {
-  //       toast.error(err.message || "user not found");
-  //       console.log("error", error);
-  //       setLoading(isLoading);
-  //     }
-  //   }
-  // };
-  const flattenObject = (ob: any) => {
-    let toReturn: any = {};
-    for (let i in ob) {
-      if (!ob.hasOwnProperty(i)) continue;
-      if (typeof ob[i] == "object" && ob[i] !== null) {
-        let flatObject = flattenObject(ob[i]);
-        for (let x in flatObject) {
-          if (!flatObject.hasOwnProperty(x)) continue;
-          toReturn[i + "." + x] = flatObject[x];
-        }
-      } else {
-        toReturn[i] = ob[i];
+export const UserCreate = () => {
+  const [preview, setPreview] = useState<string>("");
+  const { id } = useAuth();
+  const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
+  const [loading, setLoading] = useState(false);
+  const addPerson = async (values: any) => {
+    if (contract) {
+      const date = Date.parse(values.bod) / 1000;
+      try {
+        const result = await contract?.call("addPerson", [
+          Number(id),
+          values.fullName,
+          Number(values.id),
+          values.job,
+          date,
+          values.gender,
+          values.role,
+          values.preview,
+        ]);
+        console.log("result", result);
+      } catch (err: any) {
+        toast.error(err.message || "user not found");
+        setLoading(isLoading);
       }
     }
-    return toReturn;
   };
-  useEffect(() => {
-    setUserData({
-      fullName: user?.fullName,
-      id: user?.sign[0],
-      job: user?.job,
-      gender: user?.gender,
-      role: user?.role,
-      bod: moment.unix(parseInt(user?.bod?._hex)).format("L"),
-      image: preview,
-    });
-    (async () => {
-      const img = await downloadFile(user?.info?.image);
-      console.log(img.url);
-      formik.setValues({ ...formik.values, image: img.url });
-      setPreview(formik.values.image);
-      console.log(preview);
-    })();
-  }, [user, preview]);
 
   const formik = useFormik({
     initialValues: {
-      ...userData,
+      fullName: "",
+      id: 0,
+      job: "",
+      bod: "",
+      gender: genders[0].id,
+      role: roles[0].id,
     },
     enableReinitialize: true,
     validationSchema: yup.object({
-      // Username: yup.string().max(255).required("UsernameIsRequired"),
-      // role: yup.string().max(255).required("roleIsRequired"),
-      // phone_number: yup
-      //   .string()
-      //   .min(11, "phoneNumberLengthMessage")
-      //   .max(11, "phoneNumberLengthMessage")
-      //   .required("phoneNumberIsRequired"),
-      // password: yup.string().min(6).max(255),
+      fullName: yup.string().max(255).required("Full Name Is Required"),
+      id: yup.number().required("ID Is Required"),
+      job: yup.string().max(255).required("Job Is Required"),
+      bod: yup.string().max(255).required("Date Of Birth Is Required"),
+      gender: yup.number().required("Gender Is Required"),
+      role: yup.number().required("Role Is Required"),
     }),
     onSubmit: async (values) => {
-      // const flattened = flattenObject(formik.initialValues);
-      // //only get the modified values to not accidentally edit old ones.
-      // let resultObject: any = {};
-      // Object.entries(flattened)?.map((entry) => {
-      //   const [key, oldVal] = entry;
-      //   const newVal = get(values, key);
-      //   if (newVal !== oldVal) {
-      //     set(resultObject, key, newVal);
-      //   }
-      // });
-      // const { success } = await updateUser(row.id, resultObject);
-      // if (success) {
-      //   // setOpen(false);
-      // }
+      if (preview != "") {
+        await addPerson({ ...values, preview });
+      }
     },
   });
 
-  // const updateUser = async (values: any): Promise<{ success: boolean }> => {
-  //   const load = toast.loading("update");
-  //   try {
-  //     const resp = await userApi.updateUser(id, values);
-  //     if (resp.success) {
-  //       getUser(id);
-  //       toast.dismiss(load);
-  //       toast.success("updated");
-  //       return { success: true };
-  //     } else {
-  //       toast.dismiss(load);
-  //       toast.error("updateFailed");
-  //       return { success: false };
-  //     }
-  //   } catch (err: any) {
-  //     toast.dismiss(load);
-  //     toast.error(err.message || "updatesFailed");
-  //     return { success: false };
-  //   }
-  // };
-
-  useEffect(() => {
-    console.log("user", user);
-    console.log("formic", formik.values);
-  }, [formik.values]);
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <Grid
@@ -174,8 +102,8 @@ export const UserForm: FC<profileProps> = (props) => {
       >
         <Grid item xs={8}>
           <form onSubmit={formik.handleSubmit}>
-            <Typography variant="h4" sx={{ textAlign: "left" }}>
-              Personal Information
+            <Typography variant="h4" sx={{ textAlign: "center" }}>
+              Create new user
             </Typography>
             <Paper
               elevation={12}
@@ -185,7 +113,7 @@ export const UserForm: FC<profileProps> = (props) => {
                 minHeight: "280px",
                 ...(true && {
                   bgcolor: (theme) =>
-                    alpha(theme.palette.info.contrastText, 0.5),
+                    alpha(theme.palette.info.contrastText, 0.57),
                 }),
               }}
             >
@@ -250,7 +178,7 @@ export const UserForm: FC<profileProps> = (props) => {
                 size="small"
                 sx={{
                   mt: 3,
-                  width: { xs: "96%" },
+                  width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
                     height: 40,
                   },
@@ -388,7 +316,7 @@ export const UserForm: FC<profileProps> = (props) => {
                 margin="normal"
                 id="bod"
                 name="bod"
-                type="text"
+                type="date"
                 onChange={formik.handleChange}
                 value={formik.values.bod}
                 InputLabelProps={{
@@ -406,6 +334,7 @@ export const UserForm: FC<profileProps> = (props) => {
                   },
                   m: 0.5,
                   p: 1,
+                  color: "black",
                 }}
                 variant="contained"
               >

@@ -48,23 +48,20 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
       if (contract) {
         try {
           setLoading(isLoading);
-          console.log("values", values);
-          console.log("contract", contract);
 
           const result = await contract?.call("logIN", [
             Number(values._id),
             values.pass,
           ]);
-          console.log(result);
+
           if (result[0]) {
-            console.log(result);
             setHash(result[1]);
             setId(parseInt(result[2]?._hex));
             setOpenForm(false);
           } else toast.error("user not found");
         } catch (err: any) {
           toast.error(err.message || "user not found");
-          console.log("error", error);
+
           setLoading(isLoading);
         }
       }

@@ -179,7 +179,6 @@ const Login: NextPage = () => {
   const [hash, setHash] = useState<string>("");
 
   const handleClose = () => {
-    console.log(id);
     if (id != 0) {
       setOpenForm(false);
     }
@@ -191,7 +190,6 @@ const Login: NextPage = () => {
       faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
       faceapi.nets.ageGenderNet.loadFromUri("/models"),
     ]);
-    console.log("loaded");
     setIsLoaded(true);
   };
   useEffect(() => {
@@ -216,7 +214,6 @@ const Login: NextPage = () => {
 
         setDevices(videoDevices);
       })();
-      console.log("hello");
     }
   }, [isLoaded, hash]);
   useEffect(() => {
@@ -224,9 +221,7 @@ const Login: NextPage = () => {
       (async () => {
         await login(id);
       })();
-      console.log("matched", matched);
     }
-    console.log("auth", isAuthenticated);
   }, [matched]);
 
   return (
@@ -307,7 +302,6 @@ const Login: NextPage = () => {
                     let label = faceMatcher
                       .findBestMatch(descriptor)
                       .toString();
-                    console.log(label);
 
                     if (!label.includes("unknown")) {
                       setMatched(true);
@@ -332,7 +326,6 @@ const Login: NextPage = () => {
               onClick={() => {
                 if (camera.current) {
                   const result = camera.current.switchCamera();
-                  console.log(result);
                 }
               }}
             />

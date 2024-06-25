@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React, { FC, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { uploadFiles } from "../utils/ipfs";
 
 // Define interfaces for types
 interface FileWithPreview extends File {
@@ -52,7 +53,7 @@ const DropzoneComponent: FC<DropzoneComponentProps> = (props) => {
   const { setPreview } = props;
   const [files, setFiles] = useState<FileWithPreview[]>([]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setFiles(
       acceptedFiles.map((file) =>
         Object.assign({}, file, {
@@ -60,7 +61,9 @@ const DropzoneComponent: FC<DropzoneComponentProps> = (props) => {
         })
       )
     );
-    setPreview(files[0].preview);
+
+    const hash = await uploadFiles(acceptedFiles);
+    setPreview(hash);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

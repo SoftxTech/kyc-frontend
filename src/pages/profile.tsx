@@ -1,25 +1,23 @@
 import type { NextPage } from "next";
-import { Box, InputBase, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { Layout } from "../components/layout/layout";
-import { styled, alpha } from "@mui/material/styles";
+
 import { useContract } from "@thirdweb-dev/react";
 import { CONTRACT_ADDRESS } from "../const/addresses";
 import { useEffect, useState } from "react";
 import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useAuth } from "../hooks/use-auth";
-import { useRouter } from "next/router";
 
-const Query: NextPage = () => {
+const ProfilePage: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
   const { id } = useAuth();
   const [user, setUser] = useState<User>();
   const [found, setFound] = useState(false);
-  const router = useRouter();
+
   const getUser = async (id: number) => {
     if (contract) {
       const result = await contract.call("getPerson", [id]);
-      console.log(result);
       setUser(result[0]);
       setFound(result[1]);
     }
@@ -60,4 +58,4 @@ const Query: NextPage = () => {
   );
 };
 
-export default Query;
+export default ProfilePage;

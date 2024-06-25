@@ -9,6 +9,7 @@ import { useState } from "react";
 import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useRouter } from "next/router";
+import { UserCreate } from "../components/users/user-create";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -50,7 +51,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Query: NextPage = () => {
+const AddUser: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
   const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState<User>();
@@ -61,6 +62,7 @@ const Query: NextPage = () => {
   const getUser = async (id: number) => {
     if (contract) {
       const result = await contract.call("getPerson", [id]);
+      console.log(result);
       setUser(result[0]);
       setFound(result[1]);
     }
@@ -91,71 +93,11 @@ const Query: NextPage = () => {
             minHeight: "100vh",
           }}
         >
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={handleClick}
-              type="number"
-              placeholder="Search by user ID"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>{" "}
-          {found && user && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 3,
-              }}
-            >
-              <Profile
-                ID={Number(searchTerm)}
-                user={user}
-                getUser={getUser}
-              ></Profile>
-            </Box>
-          )}
-          {!found && user && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 3,
-              }}
-            >
-              {" "}
-              <Typography variant="h4" color="error">
-                User not found
-              </Typography>{" "}
-            </Box>
-          )}
-          <Button
-            onClick={handleAddUser}
-            size="large"
-            sx={{
-              ml: -3,
-              color: theme.palette.primary.light,
-              bgcolor: theme.palette.primary.main,
-              "&:hover": {
-                color: theme.palette.primary.dark, // Adjust hover color as desired
-                cursor: "pointer", // Add cursor: pointer for hover feedback
-              },
-            }}
-          >
-            Add User +
-          </Button>
+          <UserCreate />
         </Box>
       </Box>
     </Layout>
   );
 };
 
-export default Query;
+export default AddUser;

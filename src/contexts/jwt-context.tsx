@@ -170,7 +170,6 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
       method: "POST",
       body: JSON.stringify({ id: id }),
     });
-    console.log(res);
     if (res.status == 201) {
       dispatch({
         type: ActionType.INITIALIZE,

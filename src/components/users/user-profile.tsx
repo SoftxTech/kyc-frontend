@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { FC, useCallback, useEffect } from "react";
 import { useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -54,8 +55,8 @@ export const Profile: FC<profileProps> = (props) => {
   const [preview, setPreview] = useState<null | string>("");
   const [userData, setUserData] = useState<any>({
     fullName: user?.fullName,
-    job: user?.job,
     id: user?.sign[0],
+    job: user?.job,
     phone_number: user?.phone_number,
     gender: user?.gender,
     person_wallet_address: user?.person_wallet_address,
@@ -77,7 +78,6 @@ export const Profile: FC<profileProps> = (props) => {
     place: user?.edu[2],
     specialization: user?.edu[1],
     year: parseInt(user?.edu[0]._hex),
-    //}
   });
 
   // const getProfile = async (id: number) => {
@@ -91,7 +91,6 @@ export const Profile: FC<profileProps> = (props) => {
   //       } else toast.error("user not found");
   //     } catch (err: any) {
   //       toast.error(err.message || "user not found");
-  //       console.log("error", error);
   //       setLoading(isLoading);
   //     }
   //   }
@@ -112,41 +111,11 @@ export const Profile: FC<profileProps> = (props) => {
     }
     return toReturn;
   };
-  useEffect(() => {
-    setUserData({
-      fullName: user?.fullName,
-      id: user?.sign[0],
-      job: user?.job,
-      phone_number: user?.phone_number,
-      gender: user?.gender,
-      person_wallet_address: user?.person_wallet_address,
-      role: user?.role,
-      NID: parseInt(user?.NID?._hex),
-      bod: moment.unix(parseInt(user?.bod?._hex)).format("L"),
-      // info: {
-      home_address: user?.info?.home_address,
-      passport: user?.info?.passport,
-      image: preview,
-      license_number: parseInt(user?.info[0]._hex),
-      ms: user?.info[5],
-      // },
-      // sign: {
-      Password: user?.sign[1],
-      // }
-      //edu:{
-      degree: user?.edu[3],
-      place: user?.edu[2],
-      specialization: user?.edu[1],
-      year: parseInt(user?.edu[0]._hex),
-      //}
-    });
-  }, [user]);
 
   const formik = useFormik({
     initialValues: {
       ...userData,
     },
-    enableReinitialize: true,
     validationSchema: yup.object({
       // Username: yup.string().max(255).required("UsernameIsRequired"),
       // role: yup.string().max(255).required("roleIsRequired"),
@@ -195,18 +164,39 @@ export const Profile: FC<profileProps> = (props) => {
   //     return { success: false };
   //   }
   // };
+  const getImage = async () => {
+    const img = await downloadFile(user.info.image);
+    formik.setValues({
+      fullName: user.fullName,
+      id: user.sign[0],
+      job: user.job,
+      phone_number: user.phone_number,
+      gender: user.gender,
+      person_wallet_address: user.person_wallet_address,
+      role: user.role,
+      NID: parseInt(user.NID?._hex),
+      bod: moment.unix(parseInt(user.bod?._hex)).format("L"),
+      // info: {
+      home_address: user.info?.home_address,
+      passport: user.info?.passport,
+      license_number: parseInt(user.info[0]._hex),
+      ms: user.info[5],
+      // },
+      // sign: {
+      Password: user.sign[1],
+      // }
+      //edu:{
+      degree: user.edu[3],
+      place: user.edu[2],
+      specialization: user.edu[1],
+      year: parseInt(user.edu[0]._hex),
+      image: img.url,
+    });
+  };
 
-  // useEffect(() => {
-  //   console.log("user", user);
-  //   console.log("formic", formik.values);
-  // }, [formik.values]);
   useEffect(() => {
-    (async () => {
-      const img = await downloadFile(user?.info?.image);
-      formik.setValues({ ...formik.values, image: img.url });
-      setPreview(formik.values.image);
-    })();
-  });
+    getImage();
+  }, [user]);
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <Grid
@@ -234,7 +224,7 @@ export const Profile: FC<profileProps> = (props) => {
                 minHeight: "280px",
                 ...(true && {
                   bgcolor: (theme) =>
-                    alpha(theme.palette.info.contrastText, 0.5),
+                    alpha(theme.palette.info.contrastText, 0.25),
                 }),
               }}
             >
@@ -244,6 +234,7 @@ export const Profile: FC<profileProps> = (props) => {
                   mt: 3,
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -260,10 +251,19 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.fullName}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
@@ -273,6 +273,7 @@ export const Profile: FC<profileProps> = (props) => {
                   mt: 3,
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -287,20 +288,29 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.job}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
-
               <TextField
                 size="small"
                 sx={{
                   mt: 3,
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -315,10 +325,19 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.id}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
@@ -327,6 +346,7 @@ export const Profile: FC<profileProps> = (props) => {
                 sx={{
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -345,20 +365,29 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.home_address}
+                InputLabelProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    color: "black",
+                    fontSize: "18px",
+                  },
+                }}
                 InputProps={{
                   style: {
-                    paddingLeft: "6px",
                     fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
-
               <TextField
                 size="small"
                 sx={{
                   mt: 3,
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -375,20 +404,29 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.passport}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
-
               <TextField
                 size="small"
                 sx={{
                   mt: 3,
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -407,10 +445,19 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.phone_number}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
@@ -418,6 +465,7 @@ export const Profile: FC<profileProps> = (props) => {
                 sx={{
                   width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -466,6 +514,7 @@ export const Profile: FC<profileProps> = (props) => {
                 sx={{
                   width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -514,6 +563,7 @@ export const Profile: FC<profileProps> = (props) => {
                 sx={{
                   width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -564,6 +614,7 @@ export const Profile: FC<profileProps> = (props) => {
                   mt: 3,
                   width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -582,9 +633,11 @@ export const Profile: FC<profileProps> = (props) => {
                   shrink: true,
                 }}
               />
-              {preview && (
-                <img style={ImagePreview} src={preview} alt={"User image"} />
-              )}
+              <img
+                style={ImagePreview}
+                src={formik.values.image}
+                alt={"User image"}
+              />
               <DropzoneComponent setPreview={setPreview} />
             </Paper>
             <Typography variant="h4" sx={{ textAlign: "left" }}>
@@ -598,7 +651,7 @@ export const Profile: FC<profileProps> = (props) => {
                 minHeight: "180px",
                 ...(true && {
                   bgcolor: (theme) =>
-                    alpha(theme.palette.info.contrastText, 0.5),
+                    alpha(theme.palette.info.contrastText, 0.57),
                 }),
               }}
             >
@@ -608,6 +661,7 @@ export const Profile: FC<profileProps> = (props) => {
                   mt: 3,
                   width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -622,10 +676,19 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.year}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
@@ -635,6 +698,7 @@ export const Profile: FC<profileProps> = (props) => {
                   mt: 3,
                   width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -653,10 +717,19 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.specialization}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
@@ -666,6 +739,7 @@ export const Profile: FC<profileProps> = (props) => {
                   mt: 3,
                   width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -680,10 +754,19 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.place}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
@@ -693,6 +776,7 @@ export const Profile: FC<profileProps> = (props) => {
                   mt: 3,
                   width: { xs: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -707,10 +791,19 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.degree}
-                InputProps={{
+                InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
                     color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.8",
+                    padding: "10px",
                   },
                 }}
               />
@@ -720,6 +813,7 @@ export const Profile: FC<profileProps> = (props) => {
                 type="submit"
                 sx={{
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   m: 0.5,
