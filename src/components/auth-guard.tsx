@@ -18,7 +18,6 @@ export const AuthGuard: FC<AuthGuardProps> = (props) => {
     if (!router.isReady) {
       return;
     }
-    console.log(isAuthenticated);
     if (!isAuthenticated) {
       router
         .push({

@@ -11,8 +11,8 @@ export async function uploadFiles(files: File[]) {
     client: client,
     files: files,
   });
-
-  console.log(uris);
+  const uri = String(uris);
+  return uri.split("//")[1];
 }
 
 export async function downloadFile(uri: string) {
@@ -20,6 +20,5 @@ export async function downloadFile(uri: string) {
     client: client,
     uri: `ipfs://${uri}`,
   });
-  console.log(file);
   return file;
 }

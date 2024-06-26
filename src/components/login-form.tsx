@@ -23,24 +23,20 @@ import { useContract } from "@thirdweb-dev/react";
 import { CONTRACT_ADDRESS } from "../const/addresses";
 
 interface SigninFormProps {
-  id: number;
   setHash: (hash: string) => void;
   setId: (id: number) => void;
   setOpenForm: (open: boolean) => void;
 }
 
 export const SigninForm: FC<SigninFormProps> = (props) => {
-  const { id, setHash, setId, setOpenForm } = props;
-  // const isMounted = useMounted();
-  const router = useRouter();
+  const { setId, setOpenForm, setHash } = props;
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
-  // const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const formik = useFormik({
     initialValues: {
-      _id: "",
+      _id: Number(),
       pass: "",
       submit: null,
     },
@@ -52,8 +48,6 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
       if (contract) {
         try {
           setLoading(isLoading);
-          console.log("values", values);
-          console.log("contract", contract);
 
           const result = await contract?.call("logIN", [
             Number(values._id),
@@ -61,14 +55,13 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
           ]);
 
           if (result[0]) {
-            console.log(result);
             setHash(result[1]);
             setId(parseInt(result[2]?._hex));
             setOpenForm(false);
           } else toast.error("user not found");
         } catch (err: any) {
           toast.error(err.message || "user not found");
-          console.log("error", error);
+
           setLoading(isLoading);
         }
       }
@@ -105,11 +98,12 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
           // autoFocus
           error={Boolean(formik.touched._id && formik.errors._id)}
           fullWidth
+          // @ts-ignore
           helperText={formik.touched._id && formik.errors._id}
           name="_id"
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
-          type="id"
+          type="text"
           value={formik.values._id}
           inputProps={{
             style: {
@@ -138,6 +132,7 @@ export const SigninForm: FC<SigninFormProps> = (props) => {
         <TextField
           error={Boolean(formik.touched.pass && formik.errors.pass)}
           fullWidth
+          // @ts-ignore
           helperText={formik.touched.pass && formik.errors.pass}
           name="pass"
           onBlur={formik.handleBlur}

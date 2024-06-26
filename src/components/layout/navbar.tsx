@@ -9,39 +9,29 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Paper,
-  useTheme,
-} from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useTheme } from "@mui/material";
 import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
-import { SigninForm } from "../login-form";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/use-auth";
 
 const pages = [
   { name: "Read Out Docs", route: "/info" },
-  { name: "Contact", route: "/" },
+  { name: "Query", route: "/query" },
   { name: "Team", route: "/team" },
 ];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 export const Navbar: FC = () => {
   const theme = useTheme();
   const router = useRouter();
   const address = useAddress();
-  let { id, logout, isAuthenticated } = useAuth();
+  let { logout, isAuthenticated } = useAuth();
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
@@ -51,19 +41,21 @@ export const Navbar: FC = () => {
     router.push(route);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
   const hanadleSignIn = () => {
     router.push("/login").catch(console.error);
+  };
+  const handleProfile = () => {
+    router.push("/profile").catch(console.error);
   };
 
   const handleLogout = async (): Promise<void> => {
     await logout();
   };
-  console.log(id, isAuthenticated);
   return (
-    <AppBar position="fixed" sx={{ background: "none", border: "none" }}>
+    <AppBar
+      position="fixed"
+      sx={{ background: "none", border: "none", position: "sticky" }}
+    >
       <Toolbar sx={{ boxShadow: "none", mr: -5 }}>
         <GppGoodOutlinedIcon
           sx={{ display: { md: "flex" }, mr: 1 }}
@@ -159,7 +151,7 @@ export const Navbar: FC = () => {
         <Box sx={{ flexGrow: 0.05, m: 0, p: 0, width: "180px" }}>
           <ConnectWallet modalSize="wide" />
         </Box>
-        {address && !id && (
+        {address && !isAuthenticated && (
           <Box sx={{ flexGrow: 0.05 }}>
             <Button
               onClick={hanadleSignIn}
@@ -178,24 +170,45 @@ export const Navbar: FC = () => {
             </Button>
           </Box>
         )}
-        {id && (
-          <Box sx={{ flexGrow: 0.05 }}>
-            <Button
-              onClick={handleLogout}
-              size="large"
-              sx={{
-                ml: -3,
-                color: theme.palette.primary.light,
-                bgcolor: theme.palette.primary.main,
-                "&:hover": {
-                  color: theme.palette.primary.dark, // Adjust hover color as desired
-                  cursor: "pointer", // Add cursor: pointer for hover feedback
-                },
-              }}
-            >
-              Log out
-            </Button>
-          </Box>
+        {isAuthenticated && (
+          <>
+            {" "}
+            <Box sx={{ flexGrow: 0.05, ml: 1 }}>
+              <Button
+                onClick={handleLogout}
+                size="large"
+                sx={{
+                  ml: -3,
+                  color: theme.palette.primary.light,
+                  bgcolor: theme.palette.primary.main,
+                  "&:hover": {
+                    color: theme.palette.primary.dark, // Adjust hover color as desired
+                    cursor: "pointer", // Add cursor: pointer for hover feedback
+                  },
+                }}
+              >
+                Log out
+              </Button>
+            </Box>
+            <Box sx={{ flexGrow: 0.1, ml: 1 }}>
+              <IconButton
+                onClick={handleProfile}
+                size="large"
+                sx={{
+                  ml: -3,
+
+                  color: theme.palette.primary.light,
+                  bgcolor: theme.palette.primary.main,
+                  "&:hover": {
+                    color: theme.palette.primary.dark, // Adjust hover color as desired
+                    cursor: "pointer", // Add cursor: pointer for hover feedback
+                  },
+                }}
+              >
+                <AccountCircleIcon fontSize="large" />
+              </IconButton>
+            </Box>
+          </>
         )}
       </Toolbar>
     </AppBar>

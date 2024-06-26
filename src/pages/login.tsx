@@ -17,6 +17,7 @@ import { SigninForm } from "../components/login-form";
 import { User } from "../types/user";
 import toast from "react-hot-toast";
 import { downloadFile } from "../utils/ipfs";
+import { NextPage } from "next";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -156,7 +157,7 @@ const FullScreenImagePreview = styled.div<{ image: string | null }>`
   background-position: center;
 `;
 
-const Login = () => {
+const Login: NextPage = () => {
   const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [image, setImage] = useState<string>("");
   const [showImage, setShowImage] = useState<boolean>(false);
@@ -178,7 +179,6 @@ const Login = () => {
   const [hash, setHash] = useState<string>("");
 
   const handleClose = () => {
-    console.log(id);
     if (id != 0) {
       setOpenForm(false);
     }
@@ -190,7 +190,6 @@ const Login = () => {
       faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
       faceapi.nets.ageGenderNet.loadFromUri("/models"),
     ]);
-    console.log("loaded");
     setIsLoaded(true);
   };
   useEffect(() => {
@@ -215,7 +214,6 @@ const Login = () => {
 
         setDevices(videoDevices);
       })();
-      console.log("hello");
     }
   }, [isLoaded, hash]);
   useEffect(() => {
@@ -223,9 +221,7 @@ const Login = () => {
       (async () => {
         await login(id);
       })();
-      console.log("matched", matched);
     }
-    console.log("auth", isAuthenticated);
   }, [matched]);
 
   return (
@@ -306,7 +302,6 @@ const Login = () => {
                     let label = faceMatcher
                       .findBestMatch(descriptor)
                       .toString();
-                    console.log(label);
 
                     if (!label.includes("unknown")) {
                       setMatched(true);
@@ -331,7 +326,6 @@ const Login = () => {
               onClick={() => {
                 if (camera.current) {
                   const result = camera.current.switchCamera();
-                  console.log(result);
                 }
               }}
             />
@@ -358,7 +352,6 @@ const Login = () => {
               }}
             >
               <SigninForm
-                id={id}
                 setId={setId}
                 setHash={setHash}
                 setOpenForm={setOpenForm}

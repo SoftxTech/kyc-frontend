@@ -13,7 +13,14 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
     noSsr: false,
   });
   return (
-    <Box>
+    <Box
+      sx={{
+        backgroundImage: `url(${"/kyc_bg.svg"})`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <Navbar />
       {children}
       <Footer mdUp={mdUp} />
