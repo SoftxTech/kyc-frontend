@@ -11,46 +11,6 @@ import { Profile } from "../components/users/user-profile";
 import { useRouter } from "next/router";
 import { UserCreate } from "../components/users/user-create";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.45),
-  "&:hover": {
-    backgroundColor: theme.palette.primary.contrastText,
-  },
-  marginLeft: 0,
-  width: "100%",
-  color: theme.palette.text.dark,
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: theme.palette.text.disabled,
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    [theme.breakpoints.up("sm")]: {
-      width: "60vw",
-    },
-  },
-}));
-
 const AddUser: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
   const [searchTerm, setSearchTerm] = useState("");
