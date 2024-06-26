@@ -9,6 +9,7 @@ import { useState } from "react";
 import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -19,7 +20,7 @@ const Search = styled("div")(({ theme }) => ({
   },
   marginLeft: 0,
   width: "100%",
-  color: theme.palette.text.dark,
+  color: "#000000",
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(1),
     width: "auto",
@@ -60,9 +61,14 @@ const Query: NextPage = () => {
 
   const getUser = async (id: number) => {
     if (contract) {
-      const result = await contract.call("getPerson", [id]);
-      setUser(result[0]);
-      setFound(result[1]);
+      try {
+        const result = await contract.call("getPerson", [id]);
+        setUser(result[0]);
+        setFound(result[1]);
+        toast.success(`User fetched`);
+      } catch (err: any) {
+        toast.error(err.message || "user not found");
+      }
     }
   };
   const handleClick = (event: any) => {
@@ -118,6 +124,9 @@ const Query: NextPage = () => {
                 ID={Number(searchTerm)}
                 user={user}
                 getUser={getUser}
+                contract={contract}
+                isLoading={isLoading}
+                error={error}
               ></Profile>
             </Box>
           )}
@@ -142,6 +151,7 @@ const Query: NextPage = () => {
             size="large"
             sx={{
               ml: -3,
+              mt: 4,
               color: theme.palette.primary.light,
               bgcolor: theme.palette.primary.main,
               "&:hover": {

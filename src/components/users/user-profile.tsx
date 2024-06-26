@@ -36,6 +36,9 @@ interface profileProps {
   ID: number;
   user: any;
   getUser: (id: number) => void;
+  contract: any;
+  isLoading: any;
+  error: any;
 }
 const roles = [
   { id: 0, name: "Admin" },
@@ -51,12 +54,13 @@ const ms = [
   { id: 2, name: "In" },
 ];
 export const Profile: FC<profileProps> = (props) => {
-  const { ID, user, getUser } = props;
+  const { ID, user, getUser, contract, isLoading, error } = props;
   const [preview, setPreview] = useState<null | string>("");
+  const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState<any>({
-    fullName: user?.fullName,
+    Name: user?.fullName,
     id: user?.sign[0],
-    job: user?.job,
+    Job: user?.job,
     phone_number: user?.phone_number,
     gender: user?.gender,
     person_wallet_address: user?.person_wallet_address,
@@ -64,22 +68,52 @@ export const Profile: FC<profileProps> = (props) => {
     NID: parseInt(user?.NID?._hex),
     bod: moment.unix(parseInt(user?.bod?._hex)).format("L"),
     // info: {
-    home_address: user?.info?.home_address,
-    passport: user?.info?.passport,
+    Address: user?.info?.home_address,
+    Passport: user?.info?.passport,
     image: preview,
     license_number: parseInt(user?.info[0]._hex),
     ms: user?.info[5],
-    // },
-    // sign: {
     Password: user?.sign[1],
-    // }
-    //edu:{
     degree: user?.edu[3],
     place: user?.edu[2],
     specialization: user?.edu[1],
     year: parseInt(user?.edu[0]._hex),
   });
 
+  const update = async (event: any) => {
+    if (event.key === "Enter") {
+      console.log(event.target.name);
+      if (contract) {
+        try {
+          await contract?.call(`edit${event.target.name}`, [
+            ID,
+            Number(formik.values.id),
+            event.target.value,
+          ]);
+          await getUser(Number(formik.values.id));
+          toast.success(`${event.target.name} updated`);
+        } catch (err: any) {
+          toast.error(err.message || "feild not found");
+          setLoading(isLoading);
+        }
+      }
+    }
+  };
+  const updateRole = async (event: any) => {
+    if (contract) {
+      try {
+        const result = await contract?.call(`editRole`, [
+          ID,
+          Number(formik.values.id),
+          event.target.value,
+        ]);
+        console.log("result", result);
+      } catch (err: any) {
+        toast.error(err.message || "feild not found");
+        setLoading(isLoading);
+      }
+    }
+  };
   // const getProfile = async (id: number) => {
   //   if (contract) {
   //     try {
@@ -144,32 +178,12 @@ export const Profile: FC<profileProps> = (props) => {
     },
   });
 
-  // const updateUser = async (values: any): Promise<{ success: boolean }> => {
-  //   const load = toast.loading("update");
-  //   try {
-  //     const resp = await userApi.updateUser(id, values);
-  //     if (resp.success) {
-  //       getUser(id);
-  //       toast.dismiss(load);
-  //       toast.success("updated");
-  //       return { success: true };
-  //     } else {
-  //       toast.dismiss(load);
-  //       toast.error("updateFailed");
-  //       return { success: false };
-  //     }
-  //   } catch (err: any) {
-  //     toast.dismiss(load);
-  //     toast.error(err.message || "updatesFailed");
-  //     return { success: false };
-  //   }
-  // };
   const getImage = async () => {
     const img = await downloadFile(user.info.image);
     formik.setValues({
-      fullName: user.fullName,
+      Name: user.fullName,
       id: user.sign[0],
-      job: user.job,
+      Job: user.job,
       phone_number: user.phone_number,
       gender: user.gender,
       person_wallet_address: user.person_wallet_address,
@@ -177,8 +191,8 @@ export const Profile: FC<profileProps> = (props) => {
       NID: parseInt(user.NID?._hex),
       bod: moment.unix(parseInt(user.bod?._hex)).format("L"),
       // info: {
-      home_address: user.info?.home_address,
-      passport: user.info?.passport,
+      Address: user.info?.home_address,
+      Passport: user.info?.passport,
       license_number: parseInt(user.info[0]._hex),
       ms: user.info[5],
       // },
@@ -224,7 +238,7 @@ export const Profile: FC<profileProps> = (props) => {
                 minHeight: "280px",
                 ...(true && {
                   bgcolor: (theme) =>
-                    alpha(theme.palette.info.contrastText, 0.25),
+                    alpha(theme.palette.info.contrastText, 0.2),
                 }),
               }}
             >
@@ -239,18 +253,17 @@ export const Profile: FC<profileProps> = (props) => {
                   },
                   mr: 1,
                 }}
-                error={Boolean(
-                  formik.touched.fullName && formik.errors.fullName
-                )}
+                error={Boolean(formik.touched.Name && formik.errors.Name)}
                 // @ts-ignore
-                helperText={formik.touched.fullName && formik.errors.fullName}
+                helperText={formik.touched.Name && formik.errors.Name}
                 label="Full Name"
                 margin="normal"
-                id="fullName"
-                name="fullName"
+                id="Name"
+                name="Name"
                 type="text"
+                onKeyDown={update}
                 onChange={formik.handleChange}
-                value={formik.values.fullName}
+                value={formik.values.Name}
                 InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
@@ -262,7 +275,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -278,16 +291,17 @@ export const Profile: FC<profileProps> = (props) => {
                   },
                   mr: 1,
                 }}
-                error={Boolean(formik.touched.job && formik.errors.job)}
+                error={Boolean(formik.touched.Job && formik.errors.Job)}
                 // @ts-ignore
-                helperText={formik.touched.job && formik.errors.job}
-                label="job"
+                helperText={formik.touched.Job && formik.errors.Job}
+                label="Job"
                 margin="normal"
-                id="job"
-                name="job"
+                id="Job"
+                name="Job"
                 type="text"
                 onChange={formik.handleChange}
-                value={formik.values.job}
+                onKeyDown={update}
+                value={formik.values.Job}
                 InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
@@ -299,7 +313,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -322,6 +336,7 @@ export const Profile: FC<profileProps> = (props) => {
                 margin="normal"
                 id="id"
                 name="id"
+                disabled
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.id}
@@ -336,7 +351,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -351,20 +366,17 @@ export const Profile: FC<profileProps> = (props) => {
                   },
                   mr: 1,
                 }}
-                error={Boolean(
-                  formik.touched.home_address && formik.errors.home_address
-                )}
+                error={Boolean(formik.touched.Address && formik.errors.Address)}
                 // @ts-ignore
-                helperText={
-                  formik.touched.home_address && formik.errors.home_address
-                }
+                helperText={formik.touched.Address && formik.errors.Address}
                 label="Address"
                 margin="normal"
-                id="home_address"
-                name="home_address"
+                id="Address"
+                name="Address"
                 type="text"
+                onKeyDown={update}
                 onChange={formik.handleChange}
-                value={formik.values.home_address}
+                value={formik.values.Address}
                 InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
@@ -376,7 +388,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -393,17 +405,18 @@ export const Profile: FC<profileProps> = (props) => {
                   mr: 1,
                 }}
                 error={Boolean(
-                  formik.touched.passport && formik.errors.passport
+                  formik.touched.Passport && formik.errors.Passport
                 )}
                 // @ts-ignore
-                helperText={formik.touched.passport && formik.errors.passport}
+                helperText={formik.touched.Passport && formik.errors.Passport}
                 label="Passport"
                 margin="normal"
-                id="passport"
-                name="passport"
+                id="Passport"
+                name="Passport"
                 type="text"
+                onKeyDown={update}
                 onChange={formik.handleChange}
-                value={formik.values.passport}
+                value={formik.values.Passport}
                 InputLabelProps={{
                   style: {
                     fontFamily: "sans-serif",
@@ -415,7 +428,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -443,6 +456,7 @@ export const Profile: FC<profileProps> = (props) => {
                 id="phone_number"
                 name="phone_number"
                 type="text"
+                // onKeyDown={update}
                 onChange={formik.handleChange}
                 value={formik.values.phone_number}
                 InputLabelProps={{
@@ -456,7 +470,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -464,6 +478,9 @@ export const Profile: FC<profileProps> = (props) => {
               <FormControl
                 sx={{
                   width: { xs: "47.5%" },
+                  backgroundColor: "white",
+                  opacity: "0.9",
+                  borderRadius: "10px",
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -486,6 +503,7 @@ export const Profile: FC<profileProps> = (props) => {
                   name="roleId"
                   id="outlined-adornment-roleId"
                   labelId="outlined-adornment-roleId"
+                  onSelect={updateRole}
                   value={formik.values.role}
                   onChange={formik.handleChange}
                 >
@@ -513,6 +531,9 @@ export const Profile: FC<profileProps> = (props) => {
               <FormControl
                 sx={{
                   width: { xs: "47.5%" },
+                  backgroundColor: "white",
+                  opacity: "0.9",
+                  borderRadius: "10px",
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -535,6 +556,7 @@ export const Profile: FC<profileProps> = (props) => {
                   name="gender"
                   id="outlined-gender"
                   labelId="outlined-gender"
+                  // onSelect={updateRole}
                   value={formik.values.gender}
                   onChange={formik.handleChange}
                 >
@@ -562,6 +584,9 @@ export const Profile: FC<profileProps> = (props) => {
               <FormControl
                 sx={{
                   width: { xs: "47.5%" },
+                  backgroundColor: "white",
+                  opacity: "0.9",
+                  borderRadius: "10px",
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -581,10 +606,11 @@ export const Profile: FC<profileProps> = (props) => {
                   Militry State
                 </InputLabel>
                 <Select
-                  name="gender"
-                  id="outlined-gender"
-                  labelId="outlined-gender"
-                  value={formik.values.gender}
+                  name="ms"
+                  id="outlined-ms"
+                  labelId="outlined-ms"
+                  // onSelect={updateRole}
+                  value={formik.values.ms}
                   onChange={formik.handleChange}
                 >
                   {ms.map((ms) => (
@@ -629,8 +655,21 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.bod}
+                disabled
                 InputLabelProps={{
-                  shrink: true,
+                  style: {
+                    fontFamily: "sans-serif",
+                    color: "black",
+                    fontSize: "18px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    backgroundColor: "white",
+                    opacity: "0.9",
+                    padding: "10px",
+                  },
                 }}
               />
               <img
@@ -651,7 +690,7 @@ export const Profile: FC<profileProps> = (props) => {
                 minHeight: "180px",
                 ...(true && {
                   bgcolor: (theme) =>
-                    alpha(theme.palette.info.contrastText, 0.57),
+                    alpha(theme.palette.info.contrastText, 0.2),
                 }),
               }}
             >
@@ -687,7 +726,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -728,7 +767,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -765,7 +804,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}
@@ -802,7 +841,7 @@ export const Profile: FC<profileProps> = (props) => {
                   style: {
                     fontFamily: "sans-serif",
                     backgroundColor: "white",
-                    opacity: "0.8",
+                    opacity: "0.9",
                     padding: "10px",
                   },
                 }}

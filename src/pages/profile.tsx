@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useAuth } from "../hooks/use-auth";
+import toast from "react-hot-toast";
 
 const ProfilePage: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
@@ -17,9 +18,14 @@ const ProfilePage: NextPage = () => {
 
   const getUser = async (id: number) => {
     if (contract) {
-      const result = await contract.call("getPerson", [id]);
-      setUser(result[0]);
-      setFound(result[1]);
+      try {
+        const result = await contract.call("getPerson", [id]);
+        setUser(result[0]);
+        setFound(result[1]);
+        toast.success(`User fetched`);
+      } catch (err: any) {
+        toast.error(err.message || "user not found");
+      }
     }
   };
   useEffect(() => {
@@ -50,7 +56,16 @@ const ProfilePage: NextPage = () => {
               padding: 3,
             }}
           >
-            {found && <Profile ID={id} user={user} getUser={getUser}></Profile>}
+            {found && (
+              <Profile
+                contract={contract}
+                isLoading={isLoading}
+                error={error}
+                ID={id}
+                user={user}
+                getUser={getUser}
+              ></Profile>
+            )}
           </Box>
         </Box>
       </Box>
