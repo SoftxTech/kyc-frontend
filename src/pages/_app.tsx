@@ -50,7 +50,7 @@ const App: FC<EnhancedAppProps> = (props) => {
                 <Toaster position="top-center" />
                 <SettingsButton />
                 <ThirdwebProvider
-                  clientId={process.env.CLIENTID}
+                  clientId={"67eecced480ccca94e6d6390a9c368c4"}
                   activeChain={activeChain}
                 >
                   <Component {...pageProps} />

@@ -3,7 +3,7 @@ import { download } from "thirdweb/storage";
 import { createThirdwebClient } from "thirdweb";
 
 const client = createThirdwebClient({
-  clientId: process.env.CLIENTID || "67eecced480ccca94e6d6390a9c368c4",
+  clientId: "67eecced480ccca94e6d6390a9c368c4",
 });
 
 export async function uploadFiles(files: File[]) {
