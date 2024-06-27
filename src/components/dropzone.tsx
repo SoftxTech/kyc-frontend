@@ -17,11 +17,11 @@ const dropzoneStyle: React.CSSProperties = {
   padding: "20px",
   marginTop: "2rem",
   borderWidth: "2px",
-  borderRadius: "2px",
-  borderColor: "#eeeeee",
+  borderRadius: "10px",
+  borderColor: "#000000",
   borderStyle: "dashed",
   background: "none",
-  color: "#000000",
+  color: "#fff600",
   outline: "none",
   transition: "border 0.24s ease-in-out",
   cursor: "pointer",
@@ -64,6 +64,7 @@ const DropzoneComponent: FC<DropzoneComponentProps> = (props) => {
 
     const hash = await uploadFiles(acceptedFiles);
     setPreview(hash);
+    setFiles([]);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

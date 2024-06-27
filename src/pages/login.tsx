@@ -18,6 +18,7 @@ import { User } from "../types/user";
 import toast from "react-hot-toast";
 import { downloadFile } from "../utils/ipfs";
 import { NextPage } from "next";
+import { UserGuard } from "../components/user-guard";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -225,142 +226,149 @@ const Login: NextPage = () => {
   }, [matched]);
 
   return (
-    <Box>
-      {id != 0 ? (
-        <Wrapper>
-          {showImage ? (
-            <FullScreenImagePreview
-              image={image}
-              onClick={() => {
-                setShowImage(!showImage);
-              }}
-            />
-          ) : (
-            <Camera
-              ref={camera}
-              aspectRatio="cover"
-              facingMode="environment"
-              numberOfCamerasCallback={(i: any) => setNumberOfCameras(i)}
-              videoSourceDeviceId={activeDeviceId}
-              errorMessages={{
-                noCameraAccessible:
-                  "No camera device accessible. Please connect your camera or try a different browser.",
-                permissionDenied:
-                  "Permission denied. Please refresh and give camera permission.",
-                switchCamera:
-                  "It is not possible to switch camera to different one because there is only one video device accessible.",
-                canvas: "Canvas is not supported.",
-              }}
-              videoReadyCallback={() => {
-                console.log("Video feed ready.");
-              }}
-            />
-          )}
-          <Control>
-            <select
-              title="control"
-              onChange={(event) => {
-                setActiveDeviceId(event.target.value);
-              }}
-            >
-              {devices.map((d) => (
-                <option key={d.deviceId} value={d.deviceId}>
-                  {d.label}
-                </option>
-              ))}
-            </select>
-            <ImagePreview
-              image={image}
-              onClick={() => {
-                setShowImage(!showImage);
-              }}
-            />
-            <TakePhotoButton
-              onClick={async () => {
-                if (camera.current) {
-                  const photo = camera.current.takePhoto();
-                  const base64Image = photo.toString();
-
-                  setImage(base64Image);
-
-                  const blob = await fetch(image).then((res) => res.blob());
-
-                  const facesToCheck = await faceapi.bufferToImage(blob);
-
-                  let facesToCheckAiData = await faceapi
-                    .detectAllFaces(facesToCheck)
-                    .withFaceLandmarks()
-                    .withFaceDescriptors();
-                  facesToCheckAiData = faceapi.resizeResults(
-                    facesToCheckAiData,
-                    facesToCheck
-                  );
-
-                  facesToCheckAiData.forEach((face: any) => {
-                    const { detection, descriptor } = face;
-                    //make a label, using the default
-                    let label = faceMatcher
-                      .findBestMatch(descriptor)
-                      .toString();
-
-                    if (!label.includes("unknown")) {
-                      setMatched(true);
-                      toast.success("matched");
-                    }
-                  });
-                }
-              }}
-            />
-            {camera.current?.torchSupported && (
-              <TorchButton
-                className={torchToggled ? "toggled" : ""}
+    <UserGuard>
+      <Box>
+        {id != 0 ? (
+          <Wrapper>
+            {showImage ? (
+              <FullScreenImagePreview
+                image={image}
                 onClick={() => {
-                  if (camera.current) {
-                    setTorchToggled(camera.current.toggleTorch());
-                  }
+                  setShowImage(!showImage);
+                }}
+              />
+            ) : (
+              <Camera
+                ref={camera}
+                aspectRatio="cover"
+                facingMode="environment"
+                numberOfCamerasCallback={(i: any) => setNumberOfCameras(i)}
+                videoSourceDeviceId={activeDeviceId}
+                errorMessages={{
+                  noCameraAccessible:
+                    "No camera device accessible. Please connect your camera or try a different browser.",
+                  permissionDenied:
+                    "Permission denied. Please refresh and give camera permission.",
+                  switchCamera:
+                    "It is not possible to switch camera to different one because there is only one video device accessible.",
+                  canvas: "Canvas is not supported.",
+                }}
+                videoReadyCallback={() => {
+                  console.log("Video feed ready.");
                 }}
               />
             )}
-            <ChangeFacingCameraButton
-              disabled={numberOfCameras <= 1}
-              onClick={() => {
-                if (camera.current) {
-                  const result = camera.current.switchCamera();
-                }
-              }}
-            />
-          </Control>
-        </Wrapper>
-      ) : (
-        <Paper style={{ backgroundColor: "lightblue" }}>
-          <Dialog open={openForm} onClose={handleClose} maxWidth="xs" fullWidth>
-            <DialogTitle
-              style={{
-                margin: 3,
-                marginLeft: 0,
-                backgroundColor: theme.palette.primary.contrastText,
-                color: theme.palette.text.primary,
-              }}
-            >
-              <Typography variant="h5">Sign in</Typography>
-            </DialogTitle>
-            <DialogContent
-              style={{
-                minWidth: "390px",
-                minHeight: "370px",
-                backgroundColor: theme.palette.primary.contrastText,
-              }}
-            >
-              <SigninForm
-                setId={setId}
-                setHash={setHash}
-                setOpenForm={setOpenForm}
+            <Control>
+              <select
+                title="control"
+                onChange={(event) => {
+                  setActiveDeviceId(event.target.value);
+                }}
+              >
+                {devices.map((d) => (
+                  <option key={d.deviceId} value={d.deviceId}>
+                    {d.label}
+                  </option>
+                ))}
+              </select>
+              <ImagePreview
+                image={image}
+                onClick={() => {
+                  setShowImage(!showImage);
+                }}
               />
-            </DialogContent>
-          </Dialog>
-        </Paper>
-      )}
-    </Box>
+              <TakePhotoButton
+                onClick={async () => {
+                  if (camera.current) {
+                    const photo = camera.current.takePhoto();
+                    const base64Image = photo.toString();
+
+                    setImage(base64Image);
+
+                    const blob = await fetch(image).then((res) => res.blob());
+
+                    const facesToCheck = await faceapi.bufferToImage(blob);
+
+                    let facesToCheckAiData = await faceapi
+                      .detectAllFaces(facesToCheck)
+                      .withFaceLandmarks()
+                      .withFaceDescriptors();
+                    facesToCheckAiData = faceapi.resizeResults(
+                      facesToCheckAiData,
+                      facesToCheck
+                    );
+
+                    facesToCheckAiData.forEach((face: any) => {
+                      const { detection, descriptor } = face;
+                      //make a label, using the default
+                      let label = faceMatcher
+                        .findBestMatch(descriptor)
+                        .toString();
+
+                      if (!label.includes("unknown")) {
+                        setMatched(true);
+                        toast.success("matched");
+                      }
+                    });
+                  }
+                }}
+              />
+              {camera.current?.torchSupported && (
+                <TorchButton
+                  className={torchToggled ? "toggled" : ""}
+                  onClick={() => {
+                    if (camera.current) {
+                      setTorchToggled(camera.current.toggleTorch());
+                    }
+                  }}
+                />
+              )}
+              <ChangeFacingCameraButton
+                disabled={numberOfCameras <= 1}
+                onClick={() => {
+                  if (camera.current) {
+                    const result = camera.current.switchCamera();
+                  }
+                }}
+              />
+            </Control>
+          </Wrapper>
+        ) : (
+          <Paper style={{ backgroundColor: "lightblue" }}>
+            <Dialog
+              open={openForm}
+              onClose={handleClose}
+              maxWidth="xs"
+              fullWidth
+            >
+              <DialogTitle
+                style={{
+                  margin: 3,
+                  marginLeft: 0,
+                  backgroundColor: theme.palette.primary.contrastText,
+                  color: theme.palette.text.primary,
+                }}
+              >
+                <Typography variant="h5">Sign in</Typography>
+              </DialogTitle>
+              <DialogContent
+                style={{
+                  minWidth: "390px",
+                  minHeight: "370px",
+                  backgroundColor: theme.palette.primary.contrastText,
+                }}
+              >
+                <SigninForm
+                  setId={setId}
+                  setHash={setHash}
+                  setOpenForm={setOpenForm}
+                />
+              </DialogContent>
+            </Dialog>
+          </Paper>
+        )}
+      </Box>
+    </UserGuard>
   );
 };
 

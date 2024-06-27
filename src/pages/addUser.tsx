@@ -10,6 +10,7 @@ import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useRouter } from "next/router";
 import { UserCreate } from "../components/users/user-create";
+import { AuthGuard } from "../components/auth-guard";
 
 const AddUser: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
@@ -40,23 +41,25 @@ const AddUser: NextPage = () => {
   //   getUser();
   // });
   return (
-    <Layout>
-      <Box>
-        <Box
-          sx={{
-            display: "flex",
-            padding: 3,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            minHeight: "100vh",
-          }}
-        >
-          <UserCreate />
+    <AuthGuard>
+      <Layout>
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              padding: 3,
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              minHeight: "100vh",
+            }}
+          >
+            <UserCreate />
+          </Box>
         </Box>
-      </Box>
-    </Layout>
+      </Layout>
+    </AuthGuard>
   );
 };
 

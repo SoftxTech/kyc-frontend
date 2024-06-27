@@ -9,7 +9,6 @@ import {
   SettingsProvider,
 } from "../contexts/settings-context";
 import { CssBaseline } from "@mui/material";
-import { SettingsButton } from "../components/settings-button";
 import { Toaster } from "react-hot-toast";
 import { createTheme } from "../theme";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
@@ -48,7 +47,6 @@ const App: FC<EnhancedAppProps> = (props) => {
               >
                 <CssBaseline />
                 <Toaster position="top-center" />
-                <SettingsButton />
                 <ThirdwebProvider
                   clientId={"7bd58850e7bf1d66ec5f3fb739437749"}
                   activeChain={activeChain}

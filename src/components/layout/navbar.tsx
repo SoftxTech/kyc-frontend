@@ -19,6 +19,7 @@ const pages = [
   { name: "Read Out Docs", route: "/info" },
   { name: "Query", route: "/query" },
   { name: "Team", route: "/team" },
+  { name: "Add User", route: "/addUser" },
 ];
 
 export const Navbar: FC = () => {
@@ -28,7 +29,6 @@ export const Navbar: FC = () => {
   let { logout, isAuthenticated } = useAuth();
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);

@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
-import { Box, Button, InputBase, Typography } from "@mui/material";
+import { Box, InputBase, Typography } from "@mui/material";
 import { Layout } from "../components/layout/layout";
-import { styled, alpha, useTheme } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { useContract } from "@thirdweb-dev/react";
 import { CONTRACT_ADDRESS } from "../const/addresses";
@@ -10,6 +10,7 @@ import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { AuthGuard } from "../components/auth-guard";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -56,7 +57,6 @@ const Query: NextPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState<User>();
   const [found, setFound] = useState(false);
-  const theme = useTheme();
   const router = useRouter();
 
   const getUser = async (id: number) => {
@@ -80,91 +80,75 @@ const Query: NextPage = () => {
   const handleAddUser = () => {
     router.push("/addUser").catch(console.error);
   };
-  // useEffect(() => {
-  //   getUser();
-  // });
+
   return (
-    <Layout>
-      <Box>
-        <Box
-          sx={{
-            display: "flex",
-            padding: 3,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            minHeight: "100vh",
-          }}
-        >
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={handleClick}
-              type="number"
-              placeholder="Search by user ID"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>{" "}
-          {found && user && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 3,
-              }}
-            >
-              <Profile
-                ID={Number(searchTerm)}
-                user={user}
-                getUser={getUser}
-                contract={contract}
-                isLoading={isLoading}
-                error={error}
-              ></Profile>
-            </Box>
-          )}
-          {!found && user && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 3,
-              }}
-            >
-              {" "}
-              <Typography variant="h4" color="error">
-                User not found
-              </Typography>{" "}
-            </Box>
-          )}
-          <Button
-            onClick={handleAddUser}
-            size="large"
+    <AuthGuard>
+      <Layout>
+        <Box>
+          <Box
             sx={{
-              ml: -3,
-              mt: 4,
-              color: theme.palette.primary.light,
-              bgcolor: theme.palette.primary.main,
-              "&:hover": {
-                color: theme.palette.primary.dark, // Adjust hover color as desired
-                cursor: "pointer", // Add cursor: pointer for hover feedback
-              },
+              display: "flex",
+              padding: 3,
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              minHeight: "100vh",
             }}
           >
-            Add User +
-          </Button>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleClick}
+                type="number"
+                placeholder="Search by user ID"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>{" "}
+            {found && user && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 3,
+                }}
+              >
+                <Profile
+                  ID={Number(searchTerm)}
+                  user={user}
+                  getUser={getUser}
+                  contract={contract}
+                  isLoading={isLoading}
+                  error={error}
+                ></Profile>
+              </Box>
+            )}
+            {!found && user && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 3,
+                }}
+              >
+                {" "}
+                <Typography variant="h4" color="error">
+                  User not found
+                </Typography>{" "}
+              </Box>
+            )}
+          </Box>
         </Box>
-      </Box>
-    </Layout>
+      </Layout>
+    </AuthGuard>
   );
 };
 

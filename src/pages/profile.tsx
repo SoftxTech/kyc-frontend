@@ -9,6 +9,7 @@ import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useAuth } from "../hooks/use-auth";
 import toast from "react-hot-toast";
+import { AuthGuard } from "../components/auth-guard";
 
 const ProfilePage: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
@@ -34,42 +35,44 @@ const ProfilePage: NextPage = () => {
   }, [isLoading]);
 
   return (
-    <Layout>
-      <Box>
-        <Box
-          sx={{
-            display: "flex",
-            padding: 3,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            minHeight: "100vh",
-          }}
-        >
+    <AuthGuard>
+      <Layout>
+        <Box>
           <Box
             sx={{
               display: "flex",
+              padding: 3,
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              padding: 3,
+              textAlign: "center",
+              minHeight: "100vh",
             }}
           >
-            {found && (
-              <Profile
-                contract={contract}
-                isLoading={isLoading}
-                error={error}
-                ID={id}
-                user={user}
-                getUser={getUser}
-              ></Profile>
-            )}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 3,
+              }}
+            >
+              {found && (
+                <Profile
+                  contract={contract}
+                  isLoading={isLoading}
+                  error={error}
+                  ID={id}
+                  user={user}
+                  getUser={getUser}
+                ></Profile>
+              )}
+            </Box>
           </Box>
         </Box>
-      </Box>
-    </Layout>
+      </Layout>
+    </AuthGuard>
   );
 };
 

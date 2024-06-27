@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, useCallback, useEffect } from "react";
+import { FC, useEffect } from "react";
 import { useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {
@@ -7,27 +7,26 @@ import {
   Box,
   FormControl,
   Grid,
-  Input,
+  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
   Select,
   TextField,
   Typography,
-  useTheme,
 } from "@mui/material";
 import { useFormik } from "formik";
 import toast from "react-hot-toast";
 import * as yup from "yup";
-import { useMounted } from "../../hooks/use-mounted";
 import moment from "moment";
 import { downloadFile } from "../../utils/ipfs";
 import DropzoneComponent from "../dropzone";
 
 const ImagePreview: React.CSSProperties = {
   display: "flex",
-  maxWidth: "50%",
-  maxHeight: "50%",
+  width: "150px",
+  height: "150px",
   margin: "auto",
   borderRadius: "50%",
 };
@@ -64,16 +63,15 @@ export const Profile: FC<profileProps> = (props) => {
     phone_number: user?.phone_number,
     gender: user?.gender,
     person_wallet_address: user?.person_wallet_address,
-    role: user?.role,
+    Role: user?.role,
     NID: parseInt(user?.NID?._hex),
     bod: moment.unix(parseInt(user?.bod?._hex)).format("L"),
-    // info: {
     Address: user?.info?.home_address,
     Passport: user?.info?.passport,
     image: preview,
     license_number: parseInt(user?.info[0]._hex),
     ms: user?.info[5],
-    Password: user?.sign[1],
+    password: user?.sign[1],
     degree: user?.edu[3],
     place: user?.edu[2],
     specialization: user?.edu[1],
@@ -93,6 +91,24 @@ export const Profile: FC<profileProps> = (props) => {
           await getUser(Number(formik.values.id));
           toast.success(`${event.target.name} updated`);
         } catch (err: any) {
+          toast.error(err.message || "feild not updated");
+          setLoading(isLoading);
+        }
+      }
+    }
+  };
+  const updatePhone = async (event: any) => {
+    if (event.key === "Enter") {
+      if (contract) {
+        try {
+          await contract?.call(`EditPhone`, [
+            ID,
+            Number(formik.values.id),
+            event.target.value,
+          ]);
+          await getUser(Number(formik.values.id));
+          toast.success(`Phone number updated`);
+        } catch (err: any) {
           toast.error(err.message || "feild not found");
           setLoading(isLoading);
         }
@@ -107,43 +123,78 @@ export const Profile: FC<profileProps> = (props) => {
           Number(formik.values.id),
           event.target.value,
         ]);
-        console.log("result", result);
+        await getUser(Number(formik.values.id));
+        toast.success(`${event.target.name} updated`);
       } catch (err: any) {
-        toast.error(err.message || "feild not found");
+        toast.error(err.message || "feild not updated");
         setLoading(isLoading);
       }
     }
   };
-  // const getProfile = async (id: number) => {
-  //   if (contract) {
-  //     try {
-  //       const result = await contract?.call("logIN", [
-  //         Number(values._id),
-  //         values.pass,
-  //       ]);
-
-  //       } else toast.error("user not found");
-  //     } catch (err: any) {
-  //       toast.error(err.message || "user not found");
-  //       setLoading(isLoading);
-  //     }
-  //   }
-  // };
-  const flattenObject = (ob: any) => {
-    let toReturn: any = {};
-    for (let i in ob) {
-      if (!ob.hasOwnProperty(i)) continue;
-      if (typeof ob[i] == "object" && ob[i] !== null) {
-        let flatObject = flattenObject(ob[i]);
-        for (let x in flatObject) {
-          if (!flatObject.hasOwnProperty(x)) continue;
-          toReturn[i + "." + x] = flatObject[x];
-        }
-      } else {
-        toReturn[i] = ob[i];
+  const updateGender = async (event: any) => {
+    if (contract) {
+      try {
+        const result = await contract?.call(`editGender`, [
+          ID,
+          Number(formik.values.id),
+          event.target.value,
+        ]);
+        await getUser(Number(formik.values.id));
+        toast.success(`${event.target.name} updated`);
+      } catch (err: any) {
+        toast.error(err.message || "feild not updated");
+        setLoading(isLoading);
       }
     }
-    return toReturn;
+  };
+  const updateMilitaryStatus = async (event: any) => {
+    if (contract) {
+      try {
+        const result = await contract?.call(`editMilitaryStatus`, [
+          ID,
+          Number(formik.values.id),
+          event.target.value,
+        ]);
+        await getUser(Number(formik.values.id));
+        toast.success(`${event.target.name} updated`);
+      } catch (err: any) {
+        toast.error(err.message || "feild not updated");
+        setLoading(isLoading);
+      }
+    }
+  };
+  const updateImage = async (img: string) => {
+    if (contract) {
+      try {
+        const result = await contract?.call(`setImage`, [
+          ID,
+          Number(formik.values.id),
+          img,
+        ]);
+        await getUser(Number(formik.values.id));
+        toast.success(`Image updated`);
+      } catch (err: any) {
+        toast.error(err.message || "feild not updated");
+        setLoading(isLoading);
+      }
+    }
+  };
+  const updatePassword = async (event: any) => {
+    if (event.key === "Enter") {
+      if (contract) {
+        try {
+          const result = await contract?.call(`EditLogin`, [
+            Number(formik.values.id),
+            event.target.value,
+          ]);
+          await getUser(Number(formik.values.id));
+          toast.success(`Password updated`);
+        } catch (err: any) {
+          toast.error(err.message || "feild not updated");
+          setLoading(isLoading);
+        }
+      }
+    }
   };
 
   const formik = useFormik({
@@ -180,6 +231,7 @@ export const Profile: FC<profileProps> = (props) => {
 
   const getImage = async () => {
     const img = await downloadFile(user.info.image);
+    console.log(user);
     formik.setValues({
       Name: user.fullName,
       id: user.sign[0],
@@ -187,7 +239,7 @@ export const Profile: FC<profileProps> = (props) => {
       phone_number: user.phone_number,
       gender: user.gender,
       person_wallet_address: user.person_wallet_address,
-      role: user.role,
+      Role: user.role,
       NID: parseInt(user.NID?._hex),
       bod: moment.unix(parseInt(user.bod?._hex)).format("L"),
       // info: {
@@ -197,7 +249,7 @@ export const Profile: FC<profileProps> = (props) => {
       ms: user.info[5],
       // },
       // sign: {
-      Password: user.sign[1],
+      password: user.sign[1],
       // }
       //edu:{
       degree: user.edu[3],
@@ -211,6 +263,11 @@ export const Profile: FC<profileProps> = (props) => {
   useEffect(() => {
     getImage();
   }, [user]);
+
+  useEffect(() => {
+    if (preview) updateImage(preview);
+  }, [preview]);
+
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <Grid
@@ -238,10 +295,15 @@ export const Profile: FC<profileProps> = (props) => {
                 minHeight: "280px",
                 ...(true && {
                   bgcolor: (theme) =>
-                    alpha(theme.palette.info.contrastText, 0.2),
+                    alpha(theme.palette.info.contrastText, 0.57),
                 }),
               }}
             >
+              <img
+                style={ImagePreview}
+                src={formik.values.image}
+                alt={"User image"}
+              />
               <TextField
                 size="small"
                 sx={{
@@ -264,19 +326,10 @@ export const Profile: FC<profileProps> = (props) => {
                 onKeyDown={update}
                 onChange={formik.handleChange}
                 value={formik.values.Name}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
@@ -286,7 +339,6 @@ export const Profile: FC<profileProps> = (props) => {
                   mt: 3,
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
-                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -302,19 +354,10 @@ export const Profile: FC<profileProps> = (props) => {
                 onChange={formik.handleChange}
                 onKeyDown={update}
                 value={formik.values.Job}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
@@ -322,7 +365,7 @@ export const Profile: FC<profileProps> = (props) => {
                 size="small"
                 sx={{
                   mt: 3,
-                  width: { xs: "96%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -340,28 +383,51 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.id}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
               <TextField
                 size="small"
                 sx={{
+                  mt: 3,
+                  width: { xs: "96%", sm: "47.5%" },
+                  "& .MuiInputBase-root": {
+                    height: 40,
+                  },
+                  mr: 1,
+                }}
+                error={Boolean(
+                  formik.touched.phone_number && formik.errors.phone_number
+                )}
+                // @ts-ignore
+                helperText={
+                  formik.touched.phone_number && formik.errors.phone_number
+                }
+                label="Phone Number"
+                margin="normal"
+                id="phone_number"
+                name="phone_number"
+                type="text"
+                onKeyDown={updatePhone}
+                onChange={formik.handleChange}
+                value={formik.values.phone_number}
+                InputProps={{
+                  style: {
+                    fontFamily: "sans-serif",
+                    color: "black",
+                  },
+                }}
+              />
+              <TextField
+                size="small"
+                sx={{
+                  mt: 3,
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
-                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -377,29 +443,20 @@ export const Profile: FC<profileProps> = (props) => {
                 onKeyDown={update}
                 onChange={formik.handleChange}
                 value={formik.values.Address}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
+
               <TextField
                 size="small"
                 sx={{
                   mt: 3,
                   width: { xs: "96%" },
                   "& .MuiInputBase-root": {
-                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -417,19 +474,10 @@ export const Profile: FC<profileProps> = (props) => {
                 onKeyDown={update}
                 onChange={formik.handleChange}
                 value={formik.values.Passport}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
@@ -445,42 +493,30 @@ export const Profile: FC<profileProps> = (props) => {
                   mr: 1,
                 }}
                 error={Boolean(
-                  formik.touched.phone_number && formik.errors.phone_number
+                  formik.touched.password && formik.errors.password
                 )}
                 // @ts-ignore
-                helperText={
-                  formik.touched.phone_number && formik.errors.phone_number
-                }
-                label="Phone Number"
+                helperText={formik.touched.password && formik.errors.password}
+                label="Password"
                 margin="normal"
-                id="phone_number"
-                name="phone_number"
+                id="password"
+                name="password"
                 type="text"
-                // onKeyDown={update}
+                onKeyDown={updatePassword}
+                onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.phone_number}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
+                value={formik.values.password}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
+
               <FormControl
                 sx={{
-                  width: { xs: "47.5%" },
-                  backgroundColor: "white",
-                  opacity: "0.9",
-                  borderRadius: "10px",
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -495,19 +531,21 @@ export const Profile: FC<profileProps> = (props) => {
                   sx={{
                     top: -6,
                   }}
-                  id="outlined-adornment-roleId"
+                  id="outlined-adornment-Role"
                 >
                   Role
                 </InputLabel>
                 <Select
-                  name="roleId"
-                  id="outlined-adornment-roleId"
-                  labelId="outlined-adornment-roleId"
-                  onSelect={updateRole}
-                  value={formik.values.role}
-                  onChange={formik.handleChange}
+                  name="Role"
+                  id="outlined-adornment-Role"
+                  labelId="outlined-adornment-Role"
+                  value={formik.values.Role}
+                  onChange={(event: any) => {
+                    formik.handleChange(event);
+                    updateRole(event);
+                  }}
                 >
-                  {roles?.map((roleId) => (
+                  {roles?.map((Role) => (
                     <MenuItem
                       sx={{
                         color: "black",
@@ -520,20 +558,17 @@ export const Profile: FC<profileProps> = (props) => {
                         }),
                         fontFamily: "sans-serif",
                       }}
-                      key={roleId?.id}
-                      value={roleId?.id}
+                      key={Role?.id}
+                      value={Role?.id}
                     >
-                      {roleId?.name}
+                      {Role?.name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
               <FormControl
                 sx={{
-                  width: { xs: "47.5%" },
-                  backgroundColor: "white",
-                  opacity: "0.9",
-                  borderRadius: "10px",
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -556,9 +591,11 @@ export const Profile: FC<profileProps> = (props) => {
                   name="gender"
                   id="outlined-gender"
                   labelId="outlined-gender"
-                  // onSelect={updateRole}
                   value={formik.values.gender}
-                  onChange={formik.handleChange}
+                  onChange={(event: any) => {
+                    formik.handleChange(event);
+                    updateGender(event);
+                  }}
                 >
                   {genders.map((gender) => (
                     <MenuItem
@@ -583,10 +620,7 @@ export const Profile: FC<profileProps> = (props) => {
               </FormControl>
               <FormControl
                 sx={{
-                  width: { xs: "47.5%" },
-                  backgroundColor: "white",
-                  opacity: "0.9",
-                  borderRadius: "10px",
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -609,9 +643,11 @@ export const Profile: FC<profileProps> = (props) => {
                   name="ms"
                   id="outlined-ms"
                   labelId="outlined-ms"
-                  // onSelect={updateRole}
                   value={formik.values.ms}
-                  onChange={formik.handleChange}
+                  onChange={(event: any) => {
+                    formik.handleChange(event);
+                    updateMilitaryStatus(event);
+                  }}
                 >
                   {ms.map((ms) => (
                     <MenuItem
@@ -638,7 +674,7 @@ export const Profile: FC<profileProps> = (props) => {
                 size="small"
                 sx={{
                   mt: 3,
-                  width: { xs: "47.5%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -656,27 +692,14 @@ export const Profile: FC<profileProps> = (props) => {
                 onChange={formik.handleChange}
                 value={formik.values.bod}
                 disabled
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
-              <img
-                style={ImagePreview}
-                src={formik.values.image}
-                alt={"User image"}
-              />
+
               <DropzoneComponent setPreview={setPreview} />
             </Paper>
             <Typography variant="h4" sx={{ textAlign: "left" }}>
@@ -690,7 +713,7 @@ export const Profile: FC<profileProps> = (props) => {
                 minHeight: "180px",
                 ...(true && {
                   bgcolor: (theme) =>
-                    alpha(theme.palette.info.contrastText, 0.2),
+                    alpha(theme.palette.info.contrastText, 0.57),
                 }),
               }}
             >
@@ -698,7 +721,7 @@ export const Profile: FC<profileProps> = (props) => {
                 size="small"
                 sx={{
                   mt: 3,
-                  width: { xs: "47.5%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -715,19 +738,10 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.year}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
@@ -735,7 +749,7 @@ export const Profile: FC<profileProps> = (props) => {
                 size="small"
                 sx={{
                   mt: 3,
-                  width: { xs: "47.5%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -756,19 +770,10 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.specialization}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
@@ -776,7 +781,7 @@ export const Profile: FC<profileProps> = (props) => {
                 size="small"
                 sx={{
                   mt: 3,
-                  width: { xs: "47.5%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -793,19 +798,10 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.place}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />
@@ -813,7 +809,7 @@ export const Profile: FC<profileProps> = (props) => {
                 size="small"
                 sx={{
                   mt: 3,
-                  width: { xs: "47.5%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     color: "black",
                     height: 40,
@@ -830,19 +826,10 @@ export const Profile: FC<profileProps> = (props) => {
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.degree}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
                 InputProps={{
                   style: {
                     fontFamily: "sans-serif",
-                    backgroundColor: "white",
-                    opacity: "0.9",
-                    padding: "10px",
+                    color: "black",
                   },
                 }}
               />

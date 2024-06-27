@@ -178,7 +178,7 @@ export const UserCreate = () => {
                 size="small"
                 sx={{
                   mt: 3,
-                  width: { xs: "47.5%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     height: 40,
                   },
@@ -201,10 +201,33 @@ export const UserCreate = () => {
                   },
                 }}
               />
-
+              <TextField
+                size="small"
+                sx={{
+                  mt: 3,
+                  width: { xs: "96%", sm: "47.5%" },
+                  "& .MuiInputBase-root": {
+                    height: 40,
+                  },
+                  mr: 1,
+                }}
+                error={Boolean(formik.touched.bod && formik.errors.bod)}
+                // @ts-ignore
+                helperText={formik.touched.bod && formik.errors.bod}
+                label="Date Of Birth"
+                margin="normal"
+                id="bod"
+                name="bod"
+                type="date"
+                onChange={formik.handleChange}
+                value={formik.values.bod}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
               <FormControl
                 sx={{
-                  width: { xs: "47.5%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     height: 40,
                   },
@@ -252,7 +275,7 @@ export const UserCreate = () => {
               </FormControl>
               <FormControl
                 sx={{
-                  width: { xs: "47.5%" },
+                  width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
                     height: 40,
                   },
@@ -299,30 +322,6 @@ export const UserCreate = () => {
                 </Select>
               </FormControl>
 
-              <TextField
-                size="small"
-                sx={{
-                  mt: 3,
-                  width: { xs: "47.5%" },
-                  "& .MuiInputBase-root": {
-                    height: 40,
-                  },
-                  mr: 1,
-                }}
-                error={Boolean(formik.touched.bod && formik.errors.bod)}
-                // @ts-ignore
-                helperText={formik.touched.bod && formik.errors.bod}
-                label="Date Of Birth"
-                margin="normal"
-                id="bod"
-                name="bod"
-                type="date"
-                onChange={formik.handleChange}
-                value={formik.values.bod}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
               {<DropzoneComponent setPreview={setPreview} />}
             </Paper>
             <div style={{ textAlign: "right" }}>
