@@ -51,7 +51,7 @@ export const Profile: FC<profileProps> = (props) => {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState<any>({
     Name: user?.fullName,
-    id: user?.sign[0],
+    id: parseInt(user?.NID?._hex),
     Job: user?.job,
     phone_number: user?.phone_number,
     gender: user?.gender,
@@ -235,7 +235,7 @@ export const Profile: FC<profileProps> = (props) => {
     const img = await downloadFile(user.info.image);
     formik.setValues({
       Name: user.fullName,
-      id: user.sign[0],
+      id: parseInt(user.NID?._hex),
       Job: user.job,
       phone_number: user.phone_number,
       gender: user.gender,
@@ -248,11 +248,7 @@ export const Profile: FC<profileProps> = (props) => {
       Passport: user.info?.passport,
       license_number: parseInt(user.info[0]._hex),
       ms: user.info[5],
-      // },
-      // sign: {
       password: user.sign[1],
-      // }
-      //edu:{
       degree: user.edu[3],
       place: user.edu[2],
       specialization: user.edu[1],
@@ -262,6 +258,7 @@ export const Profile: FC<profileProps> = (props) => {
   };
 
   useEffect(() => {
+    console.log(user);
     getImage();
   }, [user]);
 
