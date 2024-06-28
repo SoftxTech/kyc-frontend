@@ -21,18 +21,11 @@ import toast from "react-hot-toast";
 import * as yup from "yup";
 import moment from "moment";
 import { downloadFile } from "../../utils/ipfs";
-import DropzoneComponent from "../dropzone";
-
-const ImagePreview: React.CSSProperties = {
-  display: "flex",
-  width: "150px",
-  height: "150px",
-  margin: "auto",
-  borderRadius: "50%",
-};
+import DropzoneComponent, { ImagePreview } from "../dropzone";
 
 interface profileProps {
   ID: number;
+  isProfile: boolean;
   user: any;
   getUser: (id: number) => void;
   contract: any;
@@ -53,7 +46,7 @@ const ms = [
   { id: 2, name: "In" },
 ];
 export const Profile: FC<profileProps> = (props) => {
-  const { ID, user, getUser, contract, isLoading, error } = props;
+  const { ID, isProfile, user, getUser, contract, isLoading, error } = props;
   const [preview, setPreview] = useState<null | string>("");
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState<any>({
@@ -91,7 +84,9 @@ export const Profile: FC<profileProps> = (props) => {
           await getUser(Number(formik.values.id));
           toast.success(`${event.target.name} updated`);
         } catch (err: any) {
-          toast.error(err.message || "feild not updated");
+          toast.error(
+            err.message ? "Transaction rejected" : "feild not updated"
+          );
           setLoading(isLoading);
         }
       }
@@ -109,7 +104,7 @@ export const Profile: FC<profileProps> = (props) => {
           await getUser(Number(formik.values.id));
           toast.success(`Phone number updated`);
         } catch (err: any) {
-          toast.error(err.message || "feild not found");
+          toast.error(err.message ? "Transaction rejected" : "feild not found");
           setLoading(isLoading);
         }
       }
@@ -126,7 +121,7 @@ export const Profile: FC<profileProps> = (props) => {
         await getUser(Number(formik.values.id));
         toast.success(`${event.target.name} updated`);
       } catch (err: any) {
-        toast.error(err.message || "feild not updated");
+        toast.error(err.message ? "Transaction rejected" : "feild not updated");
         setLoading(isLoading);
       }
     }
@@ -142,7 +137,7 @@ export const Profile: FC<profileProps> = (props) => {
         await getUser(Number(formik.values.id));
         toast.success(`${event.target.name} updated`);
       } catch (err: any) {
-        toast.error(err.message || "feild not updated");
+        toast.error(err.message ? "Transaction rejected" : "feild not updated");
         setLoading(isLoading);
       }
     }
@@ -158,7 +153,7 @@ export const Profile: FC<profileProps> = (props) => {
         await getUser(Number(formik.values.id));
         toast.success(`${event.target.name} updated`);
       } catch (err: any) {
-        toast.error(err.message || "feild not updated");
+        toast.error(err.message ? "Transaction rejected" : "feild not updated");
         setLoading(isLoading);
       }
     }
@@ -174,7 +169,7 @@ export const Profile: FC<profileProps> = (props) => {
         await getUser(Number(formik.values.id));
         toast.success(`Image updated`);
       } catch (err: any) {
-        toast.error(err.message || "feild not updated");
+        toast.error(err.message ? "Transaction rejected" : "feild not updated");
         setLoading(isLoading);
       }
     }
@@ -184,13 +179,15 @@ export const Profile: FC<profileProps> = (props) => {
       if (contract) {
         try {
           const result = await contract?.call(`EditLogin`, [
-            Number(formik.values.id),
+            ID,
             event.target.value,
           ]);
-          await getUser(Number(formik.values.id));
+          await getUser(ID);
           toast.success(`Password updated`);
         } catch (err: any) {
-          toast.error(err.message || "feild not updated");
+          toast.error(
+            err.message ? "Transaction rejected" : "feild not updated"
+          );
           setLoading(isLoading);
         }
       }
@@ -212,26 +209,30 @@ export const Profile: FC<profileProps> = (props) => {
       // password: yup.string().min(6).max(255),
     }),
     onSubmit: async (values) => {
-      // const flattened = flattenObject(formik.initialValues);
-      // //only get the modified values to not accidentally edit old ones.
-      // let resultObject: any = {};
-      // Object.entries(flattened)?.map((entry) => {
-      //   const [key, oldVal] = entry;
-      //   const newVal = get(values, key);
-      //   if (newVal !== oldVal) {
-      //     set(resultObject, key, newVal);
-      //   }
-      // });
-      // const { success } = await updateUser(row.id, resultObject);
-      // if (success) {
-      //   // setOpen(false);
-      // }
+      if (contract) {
+        try {
+          const result = await contract?.call(`editEducation`, [
+            ID,
+            Number(formik.values.id),
+            values.year,
+            values.specialization,
+            values.place,
+            values.degree,
+          ]);
+          await getUser(Number(formik.values.id));
+          toast.success(`Education updated`);
+        } catch (err: any) {
+          toast.error(
+            err.message ? "Transaction rejected" : "feild not updated"
+          );
+          setLoading(isLoading);
+        }
+      }
     },
   });
 
   const getImage = async () => {
     const img = await downloadFile(user.info.image);
-    console.log(user);
     formik.setValues({
       Name: user.fullName,
       id: user.sign[0],
@@ -481,38 +482,40 @@ export const Profile: FC<profileProps> = (props) => {
                   },
                 }}
               />
-              <TextField
-                size="small"
-                sx={{
-                  mt: 3,
-                  width: { xs: "96%" },
-                  "& .MuiInputBase-root": {
-                    color: "black",
-                    height: 40,
-                  },
-                  mr: 1,
-                }}
-                error={Boolean(
-                  formik.touched.password && formik.errors.password
-                )}
-                // @ts-ignore
-                helperText={formik.touched.password && formik.errors.password}
-                label="Password"
-                margin="normal"
-                id="password"
-                name="password"
-                type="text"
-                onKeyDown={updatePassword}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                value={formik.values.password}
-                InputProps={{
-                  style: {
-                    fontFamily: "sans-serif",
-                    color: "black",
-                  },
-                }}
-              />
+              {isProfile && (
+                <TextField
+                  size="small"
+                  sx={{
+                    mt: 3,
+                    width: { xs: "96%" },
+                    "& .MuiInputBase-root": {
+                      color: "black",
+                      height: 40,
+                    },
+                    mr: 1,
+                  }}
+                  error={Boolean(
+                    formik.touched.password && formik.errors.password
+                  )}
+                  // @ts-ignore
+                  helperText={formik.touched.password && formik.errors.password}
+                  label="Password"
+                  margin="normal"
+                  id="password"
+                  name="password"
+                  type="text"
+                  onKeyDown={updatePassword}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
+                  InputProps={{
+                    style: {
+                      fontFamily: "sans-serif",
+                      color: "black",
+                    },
+                  }}
+                />
+              )}
 
               <FormControl
                 sx={{
@@ -833,23 +836,26 @@ export const Profile: FC<profileProps> = (props) => {
                   },
                 }}
               />
-            </Paper>
-            <div style={{ textAlign: "right" }}>
-              <LoadingButton
-                type="submit"
-                sx={{
-                  "& .MuiInputBase-root": {
+              {/* only submit for Education */}
+              <div style={{ textAlign: "right" }}>
+                <LoadingButton
+                  type="submit"
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: 40,
+                    },
+                    mt: 2,
+                    mr: 1.5,
+                    p: 1,
+                    fontSize: "16px",
                     color: "black",
-                    height: 40,
-                  },
-                  m: 0.5,
-                  p: 1,
-                }}
-                variant="contained"
-              >
-                Save
-              </LoadingButton>
-            </div>
+                  }}
+                  variant="contained"
+                >
+                  Submit education
+                </LoadingButton>
+              </div>
+            </Paper>
           </form>
         </Grid>
       </Grid>

@@ -38,10 +38,10 @@ const DropzoneText: React.CSSProperties = {
   textAlign: "center",
 };
 
-const ImagePreview: React.CSSProperties = {
+export const ImagePreview: React.CSSProperties = {
   display: "flex",
-  maxWidth: "50%",
-  maxHeight: "50%",
+  width: "150px",
+  height: "150px",
   margin: "auto",
   borderRadius: "50%",
 };
@@ -64,7 +64,7 @@ const DropzoneComponent: FC<DropzoneComponentProps> = (props) => {
 
     const hash = await uploadFiles(acceptedFiles);
     setPreview(hash);
-    setFiles([]);
+    // setFiles([]);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

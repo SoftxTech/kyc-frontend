@@ -23,7 +23,11 @@ const ProfilePage: NextPage = () => {
         const result = await contract.call("getPerson", [id]);
         setUser(result[0]);
         setFound(result[1]);
-        toast.success(`User fetched`);
+        if (result[1]) {
+          toast.success(`User fetched`);
+        } else {
+          toast.error("User not found");
+        }
       } catch (err: any) {
         toast.error(err.message || "user not found");
       }
@@ -64,6 +68,7 @@ const ProfilePage: NextPage = () => {
                   isLoading={isLoading}
                   error={error}
                   ID={id}
+                  isProfile={true}
                   user={user}
                   getUser={getUser}
                 ></Profile>

@@ -89,70 +89,92 @@ export const Navbar: FC = () => {
         >
           Shield
         </Typography>
-        <Box
-          sx={{
-            flexGrow: 1,
-            display: { xs: "flex", md: "none" },
-            justifyContent: "end",
-          }}
-        >
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleOpenNavMenu}
-            color="inherit"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorElNav}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-            open={Boolean(anchorElNav)}
-            onClose={handleCloseNavMenu}
+        {isAuthenticated && (
+          <Box
             sx={{
-              display: { xs: "block", md: "none" },
+              flexGrow: 1,
+              display: { xs: "flex", md: "none" },
+              justifyContent: "end",
+            }}
+          >
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: "block", md: "none" },
+              }}
+            >
+              {pages.map((page) => (
+                <MenuItem
+                  key={page.name}
+                  onClick={() => handleRoute(page.route)}
+                >
+                  <Typography textAlign="center">{page.name}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        )}
+        {isAuthenticated && (
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "end",
             }}
           >
             {pages.map((page) => (
-              <MenuItem key={page.name} onClick={() => handleRoute(page.route)}>
-                <Typography textAlign="center">{page.name}</Typography>
-              </MenuItem>
+              <Button
+                key={page.name}
+                onClick={() => handleRoute(page.route)}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                {page.name}
+              </Button>
             ))}
-          </Menu>
-        </Box>
+          </Box>
+        )}
         <Box
           sx={{
-            flexGrow: 1,
-            display: { xs: "none", md: "flex" },
+            flexGrow: isAuthenticated ? 0.02 : 0.8,
+            m: 0,
+            p: 0,
+            width: "180px",
+            display: { xs: "flex" },
             justifyContent: "end",
           }}
         >
-          {pages.map((page) => (
-            <Button
-              key={page.name}
-              onClick={() => handleRoute(page.route)}
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              {page.name}
-            </Button>
-          ))}
-        </Box>
-        <Box sx={{ flexGrow: 0.05, m: 0, p: 0, width: "180px" }}>
           <ConnectWallet modalSize="wide" />
         </Box>
         {address && !isAuthenticated && (
-          <Box sx={{ flexGrow: 0.05 }}>
+          <Box
+            sx={{
+              flexGrow: 0.06,
+              display: { xs: "flex" },
+              justifyContent: "end",
+            }}
+          >
             <Button
               onClick={hanadleSignIn}
               size="large"
@@ -173,7 +195,7 @@ export const Navbar: FC = () => {
         {isAuthenticated && (
           <>
             {" "}
-            <Box sx={{ flexGrow: 0.05, ml: 1 }}>
+            <Box sx={{ flexGrow: 0.04, ml: 4 }}>
               <Button
                 onClick={handleLogout}
                 size="large"

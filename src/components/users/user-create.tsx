@@ -50,7 +50,7 @@ export const UserCreate = () => {
           values.job,
           date,
           values.gender,
-          values.role,
+          values.Role,
           values.preview,
         ]);
         console.log("result", result);
@@ -68,7 +68,7 @@ export const UserCreate = () => {
       job: "",
       bod: "",
       gender: genders[0].id,
-      role: roles[0].id,
+      Role: roles[0].id,
     },
     enableReinitialize: true,
     validationSchema: yup.object({
@@ -77,7 +77,7 @@ export const UserCreate = () => {
       job: yup.string().max(255).required("Job Is Required"),
       bod: yup.string().max(255).required("Date Of Birth Is Required"),
       gender: yup.number().required("Gender Is Required"),
-      role: yup.number().required("Role Is Required"),
+      Role: yup.number().required("Role Is Required"),
     }),
     onSubmit: async (values) => {
       if (preview != "") {
@@ -229,6 +229,7 @@ export const UserCreate = () => {
                 sx={{
                   width: { xs: "96%", sm: "47.5%" },
                   "& .MuiInputBase-root": {
+                    color: "black",
                     height: 40,
                   },
                   mr: 1,
@@ -241,18 +242,18 @@ export const UserCreate = () => {
                   sx={{
                     top: -6,
                   }}
-                  id="outlined-adornment-roleId"
+                  id="outlined-adornment-Role"
                 >
                   Role
                 </InputLabel>
                 <Select
-                  name="roleId"
-                  id="outlined-adornment-roleId"
-                  labelId="outlined-adornment-roleId"
-                  value={formik.values.role}
+                  name="Role"
+                  id="outlined-adornment-Role"
+                  labelId="outlined-adornment-Role"
+                  value={formik.values.Role}
                   onChange={formik.handleChange}
                 >
-                  {roles?.map((roleId) => (
+                  {roles?.map((Role) => (
                     <MenuItem
                       sx={{
                         color: "black",
@@ -265,10 +266,10 @@ export const UserCreate = () => {
                         }),
                         fontFamily: "sans-serif",
                       }}
-                      key={roleId?.id}
-                      value={roleId?.id}
+                      key={Role?.id}
+                      value={Role?.id}
                     >
-                      {roleId?.name}
+                      {Role?.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -323,23 +324,25 @@ export const UserCreate = () => {
               </FormControl>
 
               {<DropzoneComponent setPreview={setPreview} />}
+              <div style={{ textAlign: "right" }}>
+                <LoadingButton
+                  type="submit"
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: 40,
+                    },
+                    mt: 2,
+                    mr: 1,
+                    p: 1,
+                    fontSize: "16px",
+                    color: "black",
+                  }}
+                  variant="contained"
+                >
+                  Submit
+                </LoadingButton>
+              </div>
             </Paper>
-            <div style={{ textAlign: "right" }}>
-              <LoadingButton
-                type="submit"
-                sx={{
-                  "& .MuiInputBase-root": {
-                    height: 40,
-                  },
-                  m: 0.5,
-                  p: 1,
-                  color: "black",
-                }}
-                variant="contained"
-              >
-                Save
-              </LoadingButton>
-            </div>
           </form>
         </Grid>
       </Grid>
