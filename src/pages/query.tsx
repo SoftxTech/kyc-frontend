@@ -65,7 +65,7 @@ const Query: NextPage = () => {
         const result = await contract.call("getPerson", [id]);
         setUser(result[0]);
         setFound(result[1]);
-        if (found) {
+        if (result[1]) {
           toast.success(`User fetched`);
         } else {
           toast.error("User not found");
