@@ -202,8 +202,7 @@ export const Profile: FC<profileProps> = (props) => {
        phone_number: yup
          .string()
          .min(11, "phoneNumberLengthMessage")
-         .max(11, "phoneNumberLengthMessage")
-         .required("phoneNumberIsRequired"),
+         .max(11, "phoneNumberLengthMessage"),
       password: yup.string().min(6).max(255),
     }),
     onSubmit: async (values) => {
