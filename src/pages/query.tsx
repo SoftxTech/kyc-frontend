@@ -11,6 +11,7 @@ import { Profile } from "../components/users/user-profile";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { AuthGuard } from "../components/auth-guard";
+import { useAuth } from "../hooks/use-auth";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -55,6 +56,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Query: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);
   const [searchTerm, setSearchTerm] = useState("");
+  const { id } = useAuth();
   const [user, setUser] = useState<User>();
   const [found, setFound] = useState(false);
   const router = useRouter();
@@ -125,7 +127,7 @@ const Query: NextPage = () => {
                 }}
               >
                 <Profile
-                  ID={Number(searchTerm)}
+                  ID={id}
                   isProfile={false}
                   user={user}
                   getUser={getUser}
