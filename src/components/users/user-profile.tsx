@@ -94,7 +94,7 @@ export const Profile: FC<profileProps> = (props) => {
   };
   const updatePhone = async (event: any) => {
     if (event.key === "Enter") {
-      if (contract) {
+      if (contract && !formik.errors.phone_number) {
         try {
           await contract?.call(`EditPhone`, [
             ID,
@@ -201,9 +201,8 @@ export const Profile: FC<profileProps> = (props) => {
     validationSchema: yup.object({
        phone_number: yup
          .string()
-         .min(11, "phoneNumberLengthMessage")
-         .max(11, "phoneNumberLengthMessage"),
-      password: yup.string().min(6).max(255),
+         .min(11, "Phone number must be 11 number")
+         .max(11, "Phone number must be 11 number"),
     }),
     onSubmit: async (values) => {
       if (contract) {
