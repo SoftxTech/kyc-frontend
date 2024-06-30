@@ -199,14 +199,12 @@ export const Profile: FC<profileProps> = (props) => {
       ...userData,
     },
     validationSchema: yup.object({
-      // Username: yup.string().max(255).required("UsernameIsRequired"),
-      // role: yup.string().max(255).required("roleIsRequired"),
-      // phone_number: yup
-      //   .string()
-      //   .min(11, "phoneNumberLengthMessage")
-      //   .max(11, "phoneNumberLengthMessage")
-      //   .required("phoneNumberIsRequired"),
-      // password: yup.string().min(6).max(255),
+       phone_number: yup
+         .string()
+         .min(11, "phoneNumberLengthMessage")
+         .max(11, "phoneNumberLengthMessage")
+         .required("phoneNumberIsRequired"),
+      password: yup.string().min(6).max(255),
     }),
     onSubmit: async (values) => {
       if (contract) {
