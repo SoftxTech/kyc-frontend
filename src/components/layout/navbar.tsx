@@ -18,7 +18,7 @@ import { useAuth } from "../../hooks/use-auth";
 const pages = [
   { name: "Read Out Docs", route: "/info" },
   { name: "Query", route: "/query" },
-  { name: "Team", route: "/team" },
+  // { name: "Team", route: "/team" },
   { name: "Add User", route: "/addUser" },
 ];
 
