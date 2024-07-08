@@ -9,7 +9,7 @@ import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useAuth } from "../hooks/use-auth";
 import toast from "react-hot-toast";
-import { AuthGuard } from "../components/auth-guard";
+import { AuthGuard } from "../components/auth/auth-guard";
 
 const ProfilePage: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);

@@ -13,12 +13,12 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { SigninForm } from "../components/login-form";
+import { SigninForm } from "../components/auth/login-form";
 import { User } from "../types/user";
 import toast from "react-hot-toast";
 import { downloadFile } from "../utils/ipfs";
 import { NextPage } from "next";
-import { UserGuard } from "../components/user-guard";
+import { UserGuard } from "../components/auth/user-guard";
 
 const Wrapper = styled.div`
   position: fixed;

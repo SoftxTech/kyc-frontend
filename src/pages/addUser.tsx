@@ -10,7 +10,7 @@ import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useRouter } from "next/router";
 import { UserCreate } from "../components/users/user-create";
-import { AuthGuard } from "../components/auth-guard";
+import { AuthGuard } from "../components/auth/auth-guard";
 
 const AddUser: NextPage = () => {
   const { contract, isLoading, error } = useContract(CONTRACT_ADDRESS);

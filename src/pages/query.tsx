@@ -10,7 +10,7 @@ import { User } from "../types/user";
 import { Profile } from "../components/users/user-profile";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import { AuthGuard } from "../components/auth-guard";
+import { AuthGuard } from "../components/auth/auth-guard";
 import { useAuth } from "../hooks/use-auth";
 
 const Search = styled("div")(({ theme }) => ({

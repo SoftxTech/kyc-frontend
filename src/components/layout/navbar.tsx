@@ -185,7 +185,7 @@ export const Navbar: FC = () => {
               onClick={hanadleSignIn}
               size="large"
               sx={{
-                ml: -3,
+                ml: -1,
                 color: theme.palette.primary.light,
                 bgcolor: theme.palette.primary.main,
                 "&:hover": {

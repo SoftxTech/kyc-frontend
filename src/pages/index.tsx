@@ -54,10 +54,13 @@ const Home: NextPage = () => {
                 textDecoration: "none",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Odio nibh dignissim mattis
-              convallis. In phasellus vitae nunc hac at sed aliquet eu
-              consectetur. Felis arcu nec mi tristique ut in sed. Neque elit non
-              viverra consectetur.
+              Have you tired from verifying your entity in many different
+              places? All of the organisations store your data independently.
+              With Id shield, we provide a KYC system that only single and
+              authorised entity store your data, and verifying you and remaining
+              organisations could verify your entity through our system after
+              they are authorised. A completely KYC dApp built and secured via
+              blockchain now is available.
             </Typography>
           )}
         </Box>

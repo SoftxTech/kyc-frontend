@@ -65,17 +65,6 @@ export const Footer: FC<FooterProps> = (props) => {
               >
                 Blockchain KYC Solutions Leader.
               </Typography>
-              <Typography
-                variant="subtitle2"
-                noWrap
-                sx={{
-                  mt: 2,
-                  fontWeight: 500,
-                  textDecoration: "none",
-                }}
-              >
-                Blockchain KYC Solutions Leader.
-              </Typography>
             </Grid>
             <Grid item md={3} sx={{ marginTop: "45px", textAlign: "center" }}>
               <Typography

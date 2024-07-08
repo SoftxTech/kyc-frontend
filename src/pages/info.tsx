@@ -3,7 +3,7 @@ import { Box, Typography, Theme, useMediaQuery, useTheme } from "@mui/material";
 import { Layout } from "../components/layout/layout";
 import {} from "@mui/material";
 import Image from "next/image";
-import { AuthGuard } from "../components/auth-guard";
+import { AuthGuard } from "../components/auth/auth-guard";
 
 const Info: NextPage = () => {
   const theme = useTheme();

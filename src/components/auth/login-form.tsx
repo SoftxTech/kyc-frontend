@@ -19,7 +19,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 // import { useAuth } from '../../hooks/use-auth';
 import toast from "react-hot-toast";
 import { useContract } from "@thirdweb-dev/react";
-import { CONTRACT_ADDRESS } from "../const/addresses";
+import { CONTRACT_ADDRESS } from "../../const/addresses";
 
 interface SigninFormProps {
   setHash: (hash: string) => void;
