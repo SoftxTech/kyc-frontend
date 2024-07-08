@@ -294,6 +294,7 @@ export const baseThemeOptions: ThemeOptions = {
       fontWeight: 500,
       letterSpacing: 0.7,
       lineHeight: 1.57,
+      color: "#FFFFFF",
     },
     overline: {
       fontSize: "0.75rem",
@@ -338,12 +339,14 @@ export const baseThemeOptions: ThemeOptions = {
       letterSpacing: 1.3,
       fontSize: "1.5rem",
       lineHeight: 1.375,
+      color: "#FFFFFF",
     },
     h6: {
       fontWeight: 600,
       letterSpacing: 1.3,
       fontSize: "1.125rem",
       lineHeight: 1.375,
+      color: "#FFE500",
     },
   },
   zIndex: {

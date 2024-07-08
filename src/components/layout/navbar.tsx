@@ -15,18 +15,18 @@ import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/use-auth";
 
-const pages = [
-  { name: "Read Out Docs", route: "/info" },
-  { name: "Query", route: "/query" },
-  // { name: "Team", route: "/team" },
-  { name: "Add User", route: "/addUser" },
-];
-
 export const Navbar: FC = () => {
   const theme = useTheme();
   const router = useRouter();
   const address = useAddress();
   let { logout, isAuthenticated } = useAuth();
+
+  const pages = [
+    { name: "Query", access: isAuthenticated, route: "/query" },
+    { name: "Add User", access: isAuthenticated, route: "/addUser" },
+    { name: "Team", access: true, route: "/team" },
+    { name: "Read Out Docs", access: true, route: "/info" },
+  ];
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
@@ -56,7 +56,7 @@ export const Navbar: FC = () => {
       position="fixed"
       sx={{ background: "none", border: "none", position: "sticky" }}
     >
-      <Toolbar sx={{ boxShadow: "none", mr: -5 }}>
+      <Toolbar sx={{ boxShadow: "none", mr: 0 }}>
         <GppGoodOutlinedIcon
           sx={{ display: { md: "flex" }, mr: 1 }}
           fontSize="large"
@@ -89,75 +89,81 @@ export const Navbar: FC = () => {
         >
           Shield
         </Typography>
-        {isAuthenticated && (
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "flex", md: "none" },
-              justifyContent: "end",
-            }}
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: { xs: "flex", md: "none" },
+            justifyContent: "end",
+          }}
+        >
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleOpenNavMenu}
+            color="inherit"
           >
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem
-                  key={page.name}
-                  onClick={() => handleRoute(page.route)}
-                >
-                  <Typography textAlign="center">{page.name}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        )}
-        {isAuthenticated && (
-          <Box
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorElNav}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            open={Boolean(anchorElNav)}
+            onClose={handleCloseNavMenu}
             sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
-              justifyContent: "end",
+              display: { xs: "block", md: "none" },
             }}
           >
             {pages.map((page) => (
-              <Button
+              <MenuItem
                 key={page.name}
+                disabled={!page.access}
                 onClick={() => handleRoute(page.route)}
-                sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page.name}
-              </Button>
+                <Typography textAlign="center">{page.name}</Typography>
+              </MenuItem>
             ))}
-          </Box>
-        )}
+          </Menu>
+        </Box>
         <Box
           sx={{
-            flexGrow: isAuthenticated ? 0.02 : 0.8,
+            flexGrow: 1,
+            display: { xs: "none", md: "flex" },
+            justifyContent: "end",
+          }}
+        >
+          {pages.map((page) => (
+            <Button
+              key={page.name}
+              disabled={!page.access}
+              onClick={() => handleRoute(page.route)}
+              sx={{
+                my: 2,
+                color: "white",
+                display: "block",
+                "&.Mui-disabled": {
+                  color: "gray",
+                  opacity: 0.8, // adjust the opacity to your liking
+                },
+              }}
+            >
+              {page.name}
+            </Button>
+          ))}
+        </Box>
+        <Box
+          sx={{
+            flexGrow: 0.02,
             m: 0,
             p: 0,
             width: "180px",
@@ -170,7 +176,7 @@ export const Navbar: FC = () => {
         {address && !isAuthenticated && (
           <Box
             sx={{
-              flexGrow: 0.06,
+              flexGrow: 0.04,
               display: { xs: "flex" },
               justifyContent: "end",
             }}
@@ -212,7 +218,7 @@ export const Navbar: FC = () => {
                 Log out
               </Button>
             </Box>
-            <Box sx={{ flexGrow: 0.1, ml: 1 }}>
+            <Box sx={{ ml: 2 }}>
               <IconButton
                 onClick={handleProfile}
                 size="large"
