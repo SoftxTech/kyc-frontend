@@ -10,10 +10,11 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useTheme } from "@mui/material";
+import { Icon, useTheme } from "@mui/material";
 import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/use-auth";
+import Image from "next/image";
 
 export const Navbar: FC = () => {
   const theme = useTheme();
@@ -57,15 +58,28 @@ export const Navbar: FC = () => {
       sx={{ background: "none", border: "none", position: "sticky" }}
     >
       <Toolbar sx={{ boxShadow: "none", mr: 0 }}>
-        <GppGoodOutlinedIcon
-          sx={{ display: { md: "flex" }, mr: 1 }}
-          fontSize="large"
-        />
+        <>
+          <Image
+            alt="logo"
+            src={"/logo.png"}
+            width={30}
+            height={30}
+            style={{
+              overflow: "visible",
+            }}
+          />
+          <style>{`
+        .image {
+          overflow: visible;
+        }
+      `}</style>
+        </>
         <Typography
           variant="h6"
           noWrap
           sx={{
             mr: 2,
+            ml: 2,
             display: { md: "flex" },
             fontFamily: "monospace",
             fontWeight: 700,
