@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Icon, useTheme } from "@mui/material";
+import { Icon, Tooltip, useTheme } from "@mui/material";
 import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/use-auth";
@@ -58,51 +58,55 @@ export const Navbar: FC = () => {
       sx={{ background: "none", border: "none", position: "sticky" }}
     >
       <Toolbar sx={{ boxShadow: "none", mr: 0 }}>
-        <>
-          <Image
-            alt="logo"
-            src={"/logo.png"}
-            width={30}
-            height={30}
-            style={{
-              overflow: "visible",
-            }}
-          />
-          <style>{`
+        <Tooltip title={"goHome"}>
+          <IconButton sx={{ ml: 1 }} onClick={() => router.push("/")}>
+            <>
+              <Image
+                alt="logo"
+                src={"/logo.png"}
+                width={30}
+                height={30}
+                style={{
+                  overflow: "visible",
+                }}
+              />
+              <style>{`
         .image {
           overflow: visible;
         }
       `}</style>
-        </>
-        <Typography
-          variant="h6"
-          noWrap
-          sx={{
-            mr: 2,
-            ml: 2,
-            display: { md: "flex" },
-            fontFamily: "monospace",
-            fontWeight: 700,
-            color: theme.palette.primary.main,
-            textDecoration: "none",
-          }}
-        >
-          ID
-        </Typography>{" "}
-        <Typography
-          variant="h6"
-          noWrap
-          sx={{
-            mr: 2,
-            display: { md: "flex" },
-            fontFamily: "monospace",
-            fontWeight: 700,
-            color: "inherit",
-            textDecoration: "none",
-          }}
-        >
-          Shield
-        </Typography>
+            </>
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                mr: 2,
+                ml: 2,
+                display: { md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                color: theme.palette.primary.main,
+                textDecoration: "none",
+              }}
+            >
+              ID
+            </Typography>{" "}
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                mr: 2,
+                display: { md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Shield
+            </Typography>
+          </IconButton>
+        </Tooltip>
         <Box
           sx={{
             flexGrow: 1,

@@ -29,7 +29,10 @@ class CustomDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
             rel="stylesheet"
           />
-
+          <link rel="icon" href="/icon.ico" />
+          <link rel="id-shield-icon" sizes="180x180" href="/logo.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
           {/* <meta name="theme-color" content="#403D39" /> */}
         </Head>
         <body>

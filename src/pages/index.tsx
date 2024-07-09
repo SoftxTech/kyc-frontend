@@ -13,7 +13,6 @@ const Home: NextPage = () => {
       <Head>
         <title>KYC</title>
         <meta name="description" content="KYC" />
-        <link rel="icon" href="/icon.ico" />
       </Head>
       <Box
         sx={{
