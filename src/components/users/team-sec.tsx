@@ -10,8 +10,8 @@ const teamMembers = [
     cvLink:
       "https://drive.google.com/file/d/1YMiBcn9N3Gt0T5tNJKFkmMZ56VEo6-F6/view?usp=sharing",
     linkedIn: "https://www.linkedin.com/in/abdelrahman-taha-603922196/",
-    position: "AI Deverloper",
-    positionIn: "AI Deverloper",
+    position: "AI Developer",
+    positionIn: "AI Developer",
   },
 
   {
@@ -28,7 +28,7 @@ const teamMembers = [
     imgUrl: "/team/team (3).jpg",
     name: "Abdelrahman Abbas",
     cvLink:
-      "https://drive.google.com/file/d/1GUV2tw1jptD2D-GihEy0jTwiMdzhLKbl/view?usp=drive_link",
+      "https://drive.google.com/file/d/1VG1JI1f4_ZA9tsM12bypFvDckkczF-eL/view?usp=drivesdk",
     linkedIn: "https://www.linkedin.com/in/abdel-rahmanabbas",
     position: "MERN Stack Developer",
     positionIn: "Frontend Developer, Web3",
