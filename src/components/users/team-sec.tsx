@@ -10,8 +10,8 @@ const teamMembers = [
     cvLink:
       "https://drive.google.com/file/d/1YMiBcn9N3Gt0T5tNJKFkmMZ56VEo6-F6/view?usp=sharing",
     linkedIn: "https://www.linkedin.com/in/abdelrahman-taha-603922196/",
-    position: "AI Deverloper",
-    positionIn: "AI Deverloper",
+    position: "AI Developer",
+    positionIn: "AI Developer",
   },
 
   {
